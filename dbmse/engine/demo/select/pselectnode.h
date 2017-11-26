@@ -36,7 +36,7 @@ class PSelectNode : public PGetNextNode{
   private:
     BaseTable table;
     std::vector<Predicate> predicates;
-    int pos;
+    size_t pos;
 };
 
 #endif // PSELECTNODE_H

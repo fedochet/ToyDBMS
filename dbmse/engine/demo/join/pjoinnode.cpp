@@ -23,7 +23,7 @@
 #include "pjoinnode.h"
 
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
-                     LAbstractNode* p): PGetNextNode(left, right, p){
+                     LAbstractNode* p): PGetNextNode(p, left, right) {
   pos = 0;
   Initialize();
 }

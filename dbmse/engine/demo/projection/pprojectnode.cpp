@@ -3,7 +3,7 @@
 using namespace std;
 
 PProjectNode::PProjectNode(PGetNextNode* from, LProjectNode* lProjectNode)
-    : PGetNextNode(from, nullptr, lProjectNode) {
+    : PGetNextNode(lProjectNode, from, nullptr) {
   auto previous_data = from->GetNext();
   for (auto &record: previous_data) {
     vector<Value> projected_record;

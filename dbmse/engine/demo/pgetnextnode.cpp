@@ -21,7 +21,7 @@
 
 #include "pgetnextnode.h"
 
-PGetNextNode::PGetNextNode(PResultNode* left, PResultNode* right, LAbstractNode* source)
+PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
     : PResultNode(left, right, source) {
   Initialize();
 }

@@ -2,7 +2,7 @@
 #include "../../utils/utils.h"
 
 PCrossProductNode::PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LCrossProductNode* source)
-  : PGetNextNode(left, right, source) {
+  : PGetNextNode(source, left, right) {
   const auto left_results = left->GetNext();
   const auto right_results = right->GetNext();
 

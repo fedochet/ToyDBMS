@@ -26,7 +26,7 @@ static const size_t BLOCK_SIZE = 4;
 
 class PGetNextNode : public PResultNode{
   public:
-    explicit PGetNextNode(PResultNode* left = nullptr, PResultNode* right = nullptr, LAbstractNode* p = nullptr);
+    explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
     virtual std::vector<std::vector<Value>> GetNext();
     virtual std::vector<std::vector<Value>> GetNextBlock();

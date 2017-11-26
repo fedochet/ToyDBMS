@@ -28,11 +28,10 @@
 #include "pselectnode.h"
 
 PSelectNode::PSelectNode(LAbstractNode* p, std::vector<Predicate> predicate)
-    : PGetNextNode()
+    : PGetNextNode(p, nullptr, nullptr)
     , table(dynamic_cast<LSelectNode*>(p)->GetBaseTable())
     , predicates(predicate)
     , pos(0) {
-  prototype = p;
   data.clear();
   Initialize();
 }
