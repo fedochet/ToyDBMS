@@ -28,8 +28,6 @@
 
 using namespace std;
 
-typedef vector<vector<Value>> query_result;
-
 PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {

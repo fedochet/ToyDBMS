@@ -29,8 +29,8 @@ class PSelectNode : public PGetNextNode{
     PSelectNode() = default;
     PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
     ~PSelectNode() override = default;
-    std::vector<std::vector<Value>> GetNext() override;
-    std::vector<std::vector<Value>> GetNextBlock() override;
+    query_result GetNext() override;
+    query_result GetNextBlock() override;
 
     void Initialize() override;
     // print node

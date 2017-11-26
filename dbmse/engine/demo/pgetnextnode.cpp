@@ -30,7 +30,7 @@ void PGetNextNode::Initialize() {
   return;
 }
 
-std::vector<std::vector<Value>> PGetNextNode::GetNext() {
+query_result PGetNextNode::GetNext() {
   return std::vector<std::vector<Value>>();
 }
 
@@ -38,7 +38,7 @@ size_t PGetNextNode::GetAttrNum() {
   return prototype->fieldNames.size();
 }
 
-std::vector<std::vector<Value>> PGetNextNode::GetNextBlock() {
+query_result PGetNextNode::GetNextBlock() {
   return GetNext();
 }
 
