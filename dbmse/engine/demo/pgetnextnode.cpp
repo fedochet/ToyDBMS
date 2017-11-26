@@ -59,4 +59,10 @@ query_result PGetNextNode::GetNextBlock() {
   return query_result(block_start, block_end);
 }
 
+std::tuple<ErrCode, std::vector<Value>> PGetNextNode::GetRecord() {
+  if (data.empty()) {
+    data = GetNext();
+  }
 
+  return PResultNode::GetRecord();
+}

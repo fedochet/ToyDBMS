@@ -36,6 +36,9 @@ class PGetNextNode : public PResultNode{
     virtual void Initialize();
     // get number of attributes
     size_t GetAttrNum() override;
+    // returns error status and data, if possible
+    // TODO reimplement it
+    virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
 
 };
 
