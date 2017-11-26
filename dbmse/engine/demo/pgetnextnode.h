@@ -22,10 +22,11 @@
 #include <vector>
 #include "../interface/interface.h"
 
+static const size_t BLOCK_SIZE = 4;
+
 class PGetNextNode : public PResultNode{
   public:
-    PGetNextNode();
-    PGetNextNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
+    explicit PGetNextNode(PResultNode* left = nullptr, PResultNode* right = nullptr, LAbstractNode* p = nullptr);
     // internal way to transfer data
     virtual std::vector<std::vector<Value>> GetNext();
     virtual std::vector<std::vector<Value>> GetNextBlock();
@@ -33,9 +34,6 @@ class PGetNextNode : public PResultNode{
     virtual void Initialize();
     // get number of attributes
     size_t GetAttrNum() override;
-  protected:
-
-  private:
 
 };
 
