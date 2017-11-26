@@ -8,7 +8,5 @@ public:
 
     void Print(int indent) override;
 
-    std::vector<std::vector<Value>> GetNext() override;
-
     std::vector<std::vector<Value>> GetNextBlock() override;
 };
