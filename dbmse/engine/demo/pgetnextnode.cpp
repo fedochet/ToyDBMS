@@ -39,7 +39,15 @@ size_t PGetNextNode::GetAttrNum() {
 }
 
 query_result PGetNextNode::GetNextBlock() {
-  return GetNext();
+  if (pos > data.size()) {
+    return query_result();
+  }
+
+  auto block_start = data.begin() + pos;
+  auto block_end = min(block_start + BLOCK_SIZE, data.end());
+  pos += BLOCK_SIZE;
+
+  return query_result(block_start, block_end);
 }
 
 

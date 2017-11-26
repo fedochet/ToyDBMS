@@ -137,18 +137,6 @@ query_result PSelectNode::GetNext() {
   return result;
 }
 
-query_result PSelectNode::GetNextBlock() {
-  if (pos > data.size()) {
-    return query_result();
-  }
-
-  auto block_start = data.begin() + pos;
-  auto block_end = min(block_start + BLOCK_SIZE, data.end());
-  pos += BLOCK_SIZE;
-
-  return query_result(block_start, block_end);
-}
-
 void PSelectNode::Print(int indent) {
   for (int i = 0; i < indent; i++) {
     cout << " ";
