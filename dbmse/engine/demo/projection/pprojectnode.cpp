@@ -5,7 +5,7 @@ using namespace std;
 PProjectNode::PProjectNode(PGetNextNode* from, LProjectNode* lProjectNode)
     : PGetNextNode(lProjectNode, from, nullptr) {
 
-  auto current_block = GetNextBlock();
+  auto current_block = from->GetNextBlock();
   while (!current_block.empty()) {
     for (auto &record: current_block) {
       vector<Value> projected_record;
@@ -15,7 +15,7 @@ PProjectNode::PProjectNode(PGetNextNode* from, LProjectNode* lProjectNode)
       data.push_back(projected_record);
     }
 
-    current_block = GetNextBlock();
+    current_block = from->GetNextBlock();
   }
 }
 
