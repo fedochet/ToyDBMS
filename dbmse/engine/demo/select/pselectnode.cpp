@@ -20,13 +20,15 @@
 #include <iostream>
 #include <fstream>
 
-#include <string.h>
 #include <vector>
 #include <sstream>
 
 #include "pselectnode.h"
+#include "../../utils/utils.h"
 
 using namespace std;
+
+typedef vector<vector<Value>> query_result;
 
 PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
@@ -118,19 +120,35 @@ void PSelectNode::Initialize() {
         data.push_back(tmp);
       }
     }
-    
+
     table_file.close();
   } else {
     cout << "Unable to open file";
   }
 }
 
-vector<vector<Value>> PSelectNode::GetNext() {
-  return data;
+query_result PSelectNode::GetNext() {
+  query_result result;
+
+  auto next_block = GetNextBlock();
+  while (!next_block.empty()) {
+    utils::append_to_back(result, next_block);
+    next_block = GetNextBlock();
+  }
+
+  return result;
 }
 
-vector<vector<Value>> PSelectNode::GetNextBlock() {
-  return PGetNextNode::GetNextBlock();
+query_result PSelectNode::GetNextBlock() {
+  if (pos > data.size()) {
+    return query_result();
+  }
+
+  auto block_start = data.begin() + pos;
+  auto block_end = min(block_start + BLOCK_SIZE, data.end());
+  pos += BLOCK_SIZE;
+
+  return query_result(block_start, block_end);
 }
 
 void PSelectNode::Print(int indent) {
