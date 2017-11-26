@@ -34,3 +34,7 @@ void PProjectNode::Print(int indent) {
   left->Print(indent + 2);
   cout << endl;
 }
+
+size_t PProjectNode::GetAttrNum() {
+  return prototype->fieldNames.size();
+}

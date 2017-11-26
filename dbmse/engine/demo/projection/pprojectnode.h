@@ -9,4 +9,6 @@ public:
     void Print(int indent) override;
 
     std::vector<std::vector<Value>> GetNextBlock() override;
+
+    size_t GetAttrNum() override;
 };
