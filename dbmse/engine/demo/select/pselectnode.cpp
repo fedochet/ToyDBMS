@@ -4,7 +4,7 @@
 // More details regarding the course can be found here: www.math.spbu.ru/user/chernishev/
 // CHANGELOG:
 // 0.4: no chance for efficiency competition, so, this year I reoriented task towards ideas:
-//      1) tried to remove C code, now we are using lots of std:: stuff
+//      1) tried to remove C code, now we are using lots of  stuff
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
@@ -26,7 +26,9 @@
 
 #include "pselectnode.h"
 
-PSelectNode::PSelectNode(LAbstractNode* p, std::vector<Predicate> predicate)
+using namespace std;
+
+PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
   data.clear();
@@ -61,7 +63,7 @@ bool apply_string_predicate(const Value &compared_attribute, const Predicate &pr
 }
 
 bool
-matches_predicates(const BaseTable &table, const std::vector<Value> &record, const std::vector<Predicate> &predicates) {
+matches_predicates(const BaseTable &table, const vector<Value> &record, const vector<Predicate> &predicates) {
   for (auto &predicate: predicates) {
     if (table.vtypes[predicate.attribute] == predicate.vtype) {
       auto &compared_attribute = record[predicate.attribute];
@@ -77,7 +79,7 @@ matches_predicates(const BaseTable &table, const std::vector<Value> &record, con
           }
           break;
         default:
-          throw std::runtime_error("Could not match predicate type!");
+          throw runtime_error("Could not match predicate type!");
       }
     }
   }
@@ -86,8 +88,8 @@ matches_predicates(const BaseTable &table, const std::vector<Value> &record, con
 }
 
 void PSelectNode::Initialize() {
-  std::string line;
-  std::ifstream table_file(table.relpath);
+  string line;
+  ifstream table_file(table.relpath);
   if (table_file) {
     // skipping first 4 lines
     getline(table_file, line);
@@ -96,15 +98,15 @@ void PSelectNode::Initialize() {
     getline(table_file, line);
 
     while (getline(table_file, line)) {
-      std::vector<Value> tmp;
-      std::string word;
-      std::istringstream iss(line, std::istringstream::in);
+      vector<Value> tmp;
+      string word;
+      istringstream iss(line, istringstream::in);
       int field_index = 0;
       while (iss >> word) {
         // Yeah, no predicates :) -- Homework
         Value h;
         if (prototype->fieldTypes[field_index] == VT_INT) {
-          h = Value(std::stoi(word));
+          h = Value(stoi(word));
         } else {
           h = Value(word);
         }
@@ -116,27 +118,32 @@ void PSelectNode::Initialize() {
         data.push_back(tmp);
       }
     }
+    
     table_file.close();
   } else {
-    std::cout << "Unable to open file";
+    cout << "Unable to open file";
   }
 }
 
-std::vector<std::vector<Value>> PSelectNode::GetNext() {
+vector<vector<Value>> PSelectNode::GetNext() {
   return data;
+}
+
+vector<vector<Value>> PSelectNode::GetNextBlock() {
+  return PGetNextNode::GetNextBlock();
 }
 
 void PSelectNode::Print(int indent) {
   for (int i = 0; i < indent; i++) {
-    std::cout << " ";
+    cout << " ";
   }
 
-  std::cout << "SCAN " << table.relpath << " with predicates ";
+  cout << "SCAN " << table.relpath << " with predicates ";
 
   if (!predicates.empty()) {
-    std::cout << predicates[0];
+    cout << predicates[0];
   } else {
-    std::cout << "NULL" << std::endl;
+    cout << "NULL" << endl;
   }
 
   if (left) left->Print(indent + 2);
