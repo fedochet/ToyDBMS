@@ -18,6 +18,10 @@ vector<vector<Value>> PProjectNode::GetNext() {
   return data;
 }
 
+vector<vector<Value>> PProjectNode::GetNextBlock() {
+  return PGetNextNode::GetNextBlock();
+}
+
 void PProjectNode::Print(int indent) {
   for (int i = 0; i < indent; i++){
     std::cout << " ";
