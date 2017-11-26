@@ -125,17 +125,6 @@ void PSelectNode::Initialize() {
   }
 }
 
-query_result PSelectNode::GetNext() {
-  query_result result;
-
-  auto next_block = GetNextBlock();
-  while (!next_block.empty()) {
-    utils::append_to_back(result, next_block);
-    next_block = GetNextBlock();
-  }
-
-  return result;
-}
 
 void PSelectNode::Print(int indent) {
   for (int i = 0; i < indent; i++) {

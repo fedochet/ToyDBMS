@@ -20,6 +20,7 @@
 #include <tuple>
 
 #include "pgetnextnode.h"
+#include "../utils/utils.h"
 
 PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
     : PResultNode(left, right, source) {
@@ -31,7 +32,15 @@ void PGetNextNode::Initialize() {
 }
 
 query_result PGetNextNode::GetNext() {
-  return std::vector<std::vector<Value>>();
+  query_result result;
+
+  auto next_block = GetNextBlock();
+  while (!next_block.empty()) {
+    utils::append_to_back(result, next_block);
+    next_block = GetNextBlock();
+  }
+
+  return result;
 }
 
 size_t PGetNextNode::GetAttrNum() {
