@@ -1,5 +1,5 @@
 #include "pcrossproductnode.h"
-#include "../utils/utils.h"
+#include "../../utils/utils.h"
 
 PCrossProductNode::PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LCrossProductNode* source)
   : PGetNextNode(left, right, source) {

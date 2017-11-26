@@ -21,8 +21,8 @@
 #define PSELECTNODE_H
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
 
 class PSelectNode : public PGetNextNode{
   public:

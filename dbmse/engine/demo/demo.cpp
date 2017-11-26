@@ -23,10 +23,10 @@
 #include <tuple>
 #include "../interface/interface.h"
 #include "../interface/basics.h"
-#include "pselectnode.h"
-#include "pjoinnode.h"
-#include "pcrossproductnode.h"
-#include "pprojectnode.h"
+#include "select/pselectnode.h"
+#include "join/pjoinnode.h"
+#include "cross_product/pcrossproductnode.h"
+#include "projection/pprojectnode.h"
 
 // Here be rewriter and optimizer
 PResultNode* QueryFactory(LAbstractNode* node){
@@ -123,7 +123,7 @@ int main(){
         Predicate(PT_EQUALS, VT_STRING, 1, 0, "cero")
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
-    LAbstractNode* n2 = new LSelectNode(bt2, {});
+//    LAbstractNode* n2 = new LSelectNode(bt2, {});
 
     LProjectNode* p1 = new LProjectNode(n1, {"table1.description", "table1.frequency"});
     PResultNode* q1 = QueryFactory(p1);

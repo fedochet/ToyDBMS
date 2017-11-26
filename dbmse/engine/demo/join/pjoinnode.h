@@ -21,8 +21,8 @@
 #define PJOINNODE_H
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
 
 class PJoinNode : public PGetNextNode{
   public:

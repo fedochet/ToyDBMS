@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pgetnextnode.h"
+#include "../pgetnextnode.h"
 
 class PProjectNode : public PGetNextNode {
 public:
