@@ -38,8 +38,13 @@ std::vector<std::vector<Value>> PGetNextNode::GetNext(){
   return std::vector<std::vector<Value>>();
 }
 
-int PGetNextNode::GetAttrNum(){
+size_t PGetNextNode::GetAttrNum(){
   return prototype->fieldNames.size();
+}
+
+std::vector<std::vector<Value>> PGetNextNode::GetNextBlock()
+{
+  return GetNext();
 }
 
 

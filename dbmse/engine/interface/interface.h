@@ -101,7 +101,7 @@ class PResultNode{
     PResultNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
     virtual ~PResultNode();
     // returns number of attributes
-    virtual int GetAttrNum() = 0;
+    virtual size_t GetAttrNum() = 0;
     // prints tree
     virtual void Print(int indent) = 0;
     // used to get attribute info
