@@ -21,6 +21,7 @@
 #include<algorithm>
 
 #include "pjoinnode.h"
+#include "../../utils/utils.h"
 
 using namespace std;
 
@@ -57,38 +58,38 @@ void PJoinNode::Initialize() {
 
   ValueType vt = lp->fieldTypes[lpos];
 
-  for (size_t i = 0; i < lres.size(); i++) {
-    for (size_t j = 0; j < rres.size(); j++) {
-      if (lres[i][lpos] != rres[j][rpos]) {
+  for (auto &lre : lres) {
+    for (auto &rre : rres) {
+      if (lre[lpos] != rre[rpos]) {
         continue;
       }
 
       vector<Value> tmp;
       for (int k = 0; k < ln.size(); k++) {
         if (k != lpos) {
-          tmp.push_back(lres[i][k]);
+          tmp.push_back(lre[k]);
         }
       }
 
       for (size_t k = 0; k < rn.size(); k++) {
         if (k != rpos) {
-          tmp.push_back(rres[j][k]);
+          tmp.push_back(rre[k]);
         }
       }
 
-      tmp.push_back(lres[i][lpos]);
+      tmp.push_back(lre[lpos]);
       data.push_back(tmp);
     }
   }
 }
 
 size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
-  auto offset1 = ((LJoinNode*) prototype)->offset1;
-  auto offset2 = ((LJoinNode*) prototype)->offset2;
+  auto offset_name_1 = ((LJoinNode*) prototype)->offset1;
+  auto offset_name_2 = ((LJoinNode*) prototype)->offset2;
 
   for (size_t i = 0; i < names.size(); i++) {
-    ptrdiff_t lpos1 = find(names[i].begin(), names[i].end(), offset1) - names[i].begin();
-    ptrdiff_t lpos2 = find(names[i].begin(), names[i].end(), offset2) - names[i].begin();
+    ptrdiff_t lpos1 = utils::find(names[i], offset_name_1);
+    ptrdiff_t lpos2 = utils::find(names[i], offset_name_2);
 
     if (lpos1 < names[i].size() || lpos2 < names[i].size()) {
       return i;
@@ -96,7 +97,7 @@ size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
   }
 
   throw runtime_error(
-      string("Cannot join by column named ") + offset1 + " or " + offset2
+      string("Cannot join by column named ") + offset_name_1 + " or " + offset_name_2
   );
 }
 
