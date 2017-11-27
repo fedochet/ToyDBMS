@@ -1,0 +1,44 @@
+Starting demo
+Query1: plain select
+located in table1 having 4 following attributes:
+0. id INT ASCENDING
+1. description STR UNKNOWN
+2. frequency INT UNKNOWN
+3. groups INT UNKNOWN
+SCAN table1 with predicates NULL
+0 cero 100 4
+1 uno 55 1
+2 dos 25 2
+3 tres 23 4
+4 cuatro 33 41
+5 cinco 56 12
+
+Query2: simple equi-join
+located in table1 having 4 following attributes:
+0. id INT ASCENDING
+1. description STR UNKNOWN
+2. frequency INT UNKNOWN
+3. groups INT UNKNOWN
+located in table2 having 2 following attributes:
+0. id2 INT DESCENDING
+1. type2 STR UNKNOWN
+
+CROSS-PRODUCT
+  SCAN table1 with predicates [1] == cero  SCAN table2 with predicates NULL
+0 cero 100 4 5 five
+0 cero 100 4 4 four
+0 cero 100 4 3 three
+0 cero 100 4 2 two
+0 cero 100 4 1 one
+
+located in table1 having 4 following attributes:
+0. id INT ASCENDING
+1. description STR UNKNOWN
+2. frequency INT UNKNOWN
+3. groups INT UNKNOWN
+located in table2 having 2 following attributes:
+0. id2 INT DESCENDING
+1. type2 STR UNKNOWN
+Project Node, keeped names: table1.description table1.frequency
+  SCAN table1 with predicates [1] == cero
+cero 100

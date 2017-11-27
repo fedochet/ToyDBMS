@@ -4,7 +4,17 @@
 class PCrossProductNode : public PGetNextNode {
 public:
     PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LCrossProductNode* source);
-    std::vector<std::vector<Value>> GetNext() override;
+    query_result GetNextBlock() override;
     void Print(int indent) override;
     ~PCrossProductNode() override;
+
+private:
+    query_result right_node_table;
+    query_result current_left_block;
+    size_t current_left_pos;
+    size_t current_right_pos;
+
+    void UpdateLeftBlock();
+
+    void LoadRightBlock();
 };
