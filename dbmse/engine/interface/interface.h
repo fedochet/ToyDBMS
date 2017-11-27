@@ -112,7 +112,7 @@ class PResultNode{
     PResultNode* left;
     PResultNode* right;
     std::vector<std::vector<Value>> data;
-    int pos;
+    size_t pos;
 };
 
 #endif // INTERFACE_H

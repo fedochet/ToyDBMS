@@ -54,7 +54,7 @@ query_result PGetNextNode::GetNextBlock() {
 
   auto block_start = data.begin() + pos;
   auto block_end = min(block_start + BLOCK_SIZE, data.end());
-  pos += block_end - data.begin();
+  pos += block_end - block_start;
 
   return query_result(block_start, block_end);
 }
