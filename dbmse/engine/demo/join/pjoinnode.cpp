@@ -52,27 +52,9 @@ void PJoinNode::Initialize() {
   query_result lres = l->GetNext();
   query_result rres = r->GetNext();
   LAbstractNode* p = prototype;
-  size_t lpos, rpos;
 
-  for (size_t i = 0; i < lp->fieldNames.size(); i++) {
-    ptrdiff_t lpos1 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*) prototype)->offset1) - ln[i].begin();
-    ptrdiff_t lpos2 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*) prototype)->offset2) - ln[i].begin();
-
-    if (lpos1 < ln[i].size() || lpos2 < ln[i].size()) {
-      lpos = i;
-      break;
-    }
-  }
-
-  for (size_t i = 0; i < rp->fieldNames.size(); i++) {
-    ptrdiff_t rpos1 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*) prototype)->offset1) - rn[i].begin();
-    ptrdiff_t rpos2 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*) prototype)->offset2) - rn[i].begin();
-
-    if (rpos1 < rn.size() || rpos2 < rn.size()) {
-      rpos = i;
-      break;
-    }
-  }
+  size_t lpos = FindColumnOffset(ln);
+  size_t rpos = FindColumnOffset(rn);
 
   ValueType vt = lp->fieldTypes[lpos];
 
@@ -110,6 +92,24 @@ void PJoinNode::Initialize() {
       data.push_back(tmp);
     }
   }
+}
+
+size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
+  auto offset1 = ((LJoinNode*) prototype)->offset1;
+  auto offset2 = ((LJoinNode*) prototype)->offset2;
+
+  for (size_t i = 0; i < names.size(); i++) {
+    ptrdiff_t lpos1 = find(names[i].begin(), names[i].end(), offset1) - names[i].begin();
+    ptrdiff_t lpos2 = find(names[i].begin(), names[i].end(), offset2) - names[i].begin();
+
+    if (lpos1 < names[i].size() || lpos2 < names[i].size()) {
+      return i;
+    }
+  }
+
+  throw runtime_error(
+      string("Cannot join by column named ") + offset1 + " or " + offset2
+  );
 }
 
 void PJoinNode::Print(size_t indent) {

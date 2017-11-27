@@ -33,6 +33,7 @@ class PJoinNode : public PGetNextNode{
     void Print(size_t indent) override;
   private:
     int pos;
+    size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
 };
 
 #endif // PJOINNODE_H
