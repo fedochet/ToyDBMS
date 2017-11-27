@@ -28,9 +28,9 @@ class PJoinNode : public PGetNextNode{
   public:
     PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
     ~PJoinNode();
-    virtual std::vector<std::vector<Value>> GetNext();
-    virtual void Initialize();
-    virtual void Print(int indent);
+    std::vector<std::vector<Value>> GetNext() override;
+    void Initialize() override;
+    void Print(int indent) override;
   private:
     int pos;
 };

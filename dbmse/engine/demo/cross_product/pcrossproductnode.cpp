@@ -69,7 +69,6 @@ void PCrossProductNode::Print(int indent) {
   left->Print(indent + 2);
   cout << endl;
   right->Print(indent + 2);
-  cout << endl;
 }
 
 PCrossProductNode::~PCrossProductNode() {

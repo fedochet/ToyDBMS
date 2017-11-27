@@ -91,6 +91,19 @@ int main(){
     delete n1;
     delete q1;
   }
+  
+  {
+//    std::cout << std::endl << "Query2: nested loop join" << std::endl;
+//    BaseTable bt1 = BaseTable("table1");
+//    BaseTable bt2 = BaseTable("table2");
+//    LJoinNode* join_node = new LJoinNode(
+//        new LSelectNode(bt1, {}),
+//        new LSelectNode(bt2, {}),
+//        "groups", "id2", 0
+//    );
+//
+//    delete join_node;
+  }
 
   {
     std::cout << std::endl << "Query2: simple equi-join" << std::endl;
@@ -129,6 +142,9 @@ int main(){
     PResultNode* q1 = QueryFactory(p1);
     q1->Print(0);
     ExecuteQuery(q1);
+
+    delete q1;
+    delete p1;
   }
 
 }

@@ -11,4 +11,6 @@ public:
     std::vector<std::vector<Value>> GetNextBlock() override;
 
     size_t GetAttrNum() override;
+
+    virtual ~PProjectNode();
 };

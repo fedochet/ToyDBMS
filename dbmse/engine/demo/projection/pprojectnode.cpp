@@ -38,3 +38,7 @@ void PProjectNode::Print(int indent) {
 size_t PProjectNode::GetAttrNum() {
   return prototype->fieldNames.size();
 }
+
+PProjectNode::~PProjectNode() {
+  delete left;
+}
