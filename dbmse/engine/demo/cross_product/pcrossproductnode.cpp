@@ -39,6 +39,7 @@ query_result PCrossProductNode::GetNextBlock() {
       result_block.push_back(tmp_result);
 
       if (result_block.size() >= BLOCK_SIZE) {
+        current_right_pos++;
         break;
       }
     }
