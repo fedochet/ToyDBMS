@@ -24,49 +24,51 @@
 
 using namespace std;
 
+typedef vector<string> name_aliases;
+
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
-                     LAbstractNode* p): PGetNextNode(p, left, right) {
+                     LAbstractNode* p) : PGetNextNode(p, left, right) {
   pos = 0;
   Initialize();
 }
 
-PJoinNode::~PJoinNode(){
+PJoinNode::~PJoinNode() {
   delete left;
   delete right;
 }
 
-query_result PJoinNode::GetNext(){
+query_result PJoinNode::GetNext() {
   return data;
 }
 
-void PJoinNode::Initialize(){
-  PGetNextNode* l = (PGetNextNode*)left;
-  PGetNextNode* r = (PGetNextNode*)right;
+void PJoinNode::Initialize() {
+  PGetNextNode* l = (PGetNextNode*) left;
+  PGetNextNode* r = (PGetNextNode*) right;
   LAbstractNode* lp = l->prototype;
   LAbstractNode* rp = r->prototype;
-  vector<vector<string>> ln = lp->fieldNames;
-  vector<vector<string>> rn = rp->fieldNames;
+  vector<name_aliases> ln = lp->fieldNames;
+  vector<name_aliases> rn = rp->fieldNames;
 
   query_result lres = l->GetNext();
   query_result rres = r->GetNext();
   LAbstractNode* p = prototype;
-  ptrdiff_t lpos, rpos;
+  size_t lpos, rpos;
 
-  for (size_t i = 0; i < lp->fieldNames.size(); i++){
-    ptrdiff_t lpos1 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*)prototype)->offset1) - ln[i].begin();
-    ptrdiff_t lpos2 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*)prototype)->offset2) - ln[i].begin();
+  for (size_t i = 0; i < lp->fieldNames.size(); i++) {
+    ptrdiff_t lpos1 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*) prototype)->offset1) - ln[i].begin();
+    ptrdiff_t lpos2 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*) prototype)->offset2) - ln[i].begin();
 
-    if (lpos1 < ln[i].size() || lpos2 < ln[i].size()){
+    if (lpos1 < ln[i].size() || lpos2 < ln[i].size()) {
       lpos = i;
       break;
     }
   }
 
-  for (int i = 0; i < rp->fieldNames.size(); i++){
-    ptrdiff_t rpos1 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*)prototype)->offset1) - rn[i].begin();
-    ptrdiff_t rpos2 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*)prototype)->offset2) - rn[i].begin();
+  for (size_t i = 0; i < rp->fieldNames.size(); i++) {
+    ptrdiff_t rpos1 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*) prototype)->offset1) - rn[i].begin();
+    ptrdiff_t rpos2 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*) prototype)->offset2) - rn[i].begin();
 
-    if(rpos1 < rn.size() || rpos2 < rn.size()){
+    if (rpos1 < rn.size() || rpos2 < rn.size()) {
       rpos = i;
       break;
     }
@@ -74,43 +76,47 @@ void PJoinNode::Initialize(){
 
   ValueType vt = lp->fieldTypes[lpos];
 
-  for (int i = 0; i < lres.size(); i++)
-    for (int j = 0; j < rres.size(); j++){
+  for (size_t i = 0; i < lres.size(); i++) {
+    for (size_t j = 0; j < rres.size(); j++) {
       bool join = false;
-      if(vt == VT_INT){
-        if((int)lres[i][lpos] == (int)rres[j][rpos]) join = true;
-      }else{
-        if((string)lres[i][lpos] == (string)rres[j][rpos]) join = true;
-      }
-
-      if (join != true) continue;
-
-      vector<Value> tmp;
-      for (int k = 0; k < ln.size(); k++){
-        if(k != lpos){
-            tmp.push_back(lres[i][k]);
+      if (vt == VT_INT) {
+        if ((int) lres[i][lpos] == (int) rres[j][rpos]) {
+          join = true;
+        }
+      } else {
+        if ((string) lres[i][lpos] == (string) rres[j][rpos]) {
+          join = true;
         }
       }
 
-      for (int k = 0; k < rn.size(); k++){
-        if(k != rpos){
-            tmp.push_back(rres[j][k]);
+      if (!join) {
+        continue;
+      }
+
+      vector<Value> tmp;
+      for (int k = 0; k < ln.size(); k++) {
+        if (k != lpos) {
+          tmp.push_back(lres[i][k]);
+        }
+      }
+
+      for (size_t k = 0; k < rn.size(); k++) {
+        if (k != rpos) {
+          tmp.push_back(rres[j][k]);
         }
       }
 
       tmp.push_back(lres[i][lpos]);
-
-
       data.push_back(tmp);
     }
-
+  }
 }
 
-void PJoinNode::Print(size_t indent){
-  for (int i = 0; i < indent; i++){
+void PJoinNode::Print(size_t indent) {
+  for (int i = 0; i < indent; i++) {
     cout << " ";
   }
-  cout << "NL-JOIN: " << ((LJoinNode*)prototype)->offset1 <<"=" << ((LJoinNode*)prototype)->offset2 << endl;
+  cout << "NL-JOIN: " << ((LJoinNode*) prototype)->offset1 << "=" << ((LJoinNode*) prototype)->offset2 << endl;
   left->Print(indent + 2);
   right->Print(indent + 2);
 }
