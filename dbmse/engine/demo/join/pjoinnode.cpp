@@ -51,7 +51,6 @@ void PJoinNode::Initialize() {
 
   query_result lres = l->GetNext();
   query_result rres = r->GetNext();
-  LAbstractNode* p = prototype;
 
   size_t lpos = FindColumnOffset(ln);
   size_t rpos = FindColumnOffset(rn);
@@ -60,18 +59,7 @@ void PJoinNode::Initialize() {
 
   for (size_t i = 0; i < lres.size(); i++) {
     for (size_t j = 0; j < rres.size(); j++) {
-      bool join = false;
-      if (vt == VT_INT) {
-        if ((int) lres[i][lpos] == (int) rres[j][rpos]) {
-          join = true;
-        }
-      } else {
-        if ((string) lres[i][lpos] == (string) rres[j][rpos]) {
-          join = true;
-        }
-      }
-
-      if (!join) {
+      if (lres[i][lpos] != rres[j][rpos]) {
         continue;
       }
 

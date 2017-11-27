@@ -13,6 +13,16 @@ SCAN table1 with predicates NULL
 4 cuatro 33 41
 5 cinco 56 12
 
+Query2: nested loop join
+NL-JOIN: table1.groups=table2.id2
+  SCAN table1 with predicates NULL
+  SCAN table2 with predicates NULL
+0 cero 100 four 4
+1 uno 55 one 1
+2 dos 25 two 2
+3 tres 23 four 4
+
+
 Query2: simple equi-join
 located in table1 having 4 following attributes:
 0. id INT ASCENDING
@@ -24,7 +34,8 @@ located in table2 having 2 following attributes:
 1. type2 STR UNKNOWN
 
 CROSS-PRODUCT
-  SCAN table1 with predicates [1] == cero  SCAN table2 with predicates NULL
+  SCAN table1 with predicates [1] == cero
+  SCAN table2 with predicates NULL
 0 cero 100 4 5 five
 0 cero 100 4 4 four
 0 cero 100 4 3 three
@@ -39,6 +50,6 @@ located in table1 having 4 following attributes:
 located in table2 having 2 following attributes:
 0. id2 INT DESCENDING
 1. type2 STR UNKNOWN
-Project Node, keeped names: table1.description table1.frequency
+Project Node, keeped names: table1.description table1.frequency 
   SCAN table1 with predicates [1] == cero
 cero 100

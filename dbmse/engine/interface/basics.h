@@ -17,8 +17,7 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef BASICS_H
-#define BASICS_H
+#pragma once
 
 #include <string.h>
 #include <vector>
@@ -52,6 +51,7 @@ struct Value{
     vint = v;
     vstr = "";
   }
+
   Value(std::string v){
     vtype = VT_STRING;
     vstr = v;
@@ -65,6 +65,15 @@ struct Value{
   operator std::string() const {return vstr;}
   ~Value(){
   }
+
+  bool operator==(const Value& right) {
+    return vtype == right.vtype && vint == right.vint && vstr == right.vstr;
+  }
+
+  bool operator!=(const Value& right) {
+    return !(vtype == right.vtype && vint == right.vint && vstr == right.vstr);
+  }
+
 };
 
 enum PredicateType{
@@ -185,5 +194,3 @@ enum ErrCode{
   EC_FINISH,
   EC_ERROR
 };
-
-#endif // BASICS_H
