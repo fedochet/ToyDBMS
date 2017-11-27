@@ -28,11 +28,22 @@ class PJoinNode : public PGetNextNode{
   public:
     PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
     ~PJoinNode();
-    std::vector<std::vector<Value>> GetNext() override;
     void Initialize() override;
     void Print(size_t indent) override;
-  private:
-    int pos;
+
+    query_result GetNextBlock() override;
+
+private:
+    query_result right_node_table;
+    query_result current_left_block;
+    size_t current_left_pos;
+    size_t current_right_pos;
+
+    void UpdateLeftBlock();
+    void LoadRightBlock();
+
+    size_t left_join_offset;
+    size_t right_join_offset;
     size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
 };
 

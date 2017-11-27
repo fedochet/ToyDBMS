@@ -22,6 +22,7 @@
 
 #include "pjoinnode.h"
 #include "../../utils/utils.h"
+#include "../../utils/bd_utils.h"
 
 using namespace std;
 
@@ -38,10 +39,6 @@ PJoinNode::~PJoinNode() {
   delete right;
 }
 
-query_result PJoinNode::GetNext() {
-  return data;
-}
-
 void PJoinNode::Initialize() {
   PGetNextNode* l = (PGetNextNode*) left;
   PGetNextNode* r = (PGetNextNode*) right;
@@ -50,37 +47,64 @@ void PJoinNode::Initialize() {
   vector<name_aliases> ln = lp->fieldNames;
   vector<name_aliases> rn = rp->fieldNames;
 
-  query_result lres = l->GetNext();
-  query_result rres = r->GetNext();
+  left_join_offset = FindColumnOffset(ln);
+  right_join_offset = FindColumnOffset(rn);
+}
 
-  size_t lpos = FindColumnOffset(ln);
-  size_t rpos = FindColumnOffset(rn);
+query_result PJoinNode::GetNextBlock() {
+  PGetNextNode* l = (PGetNextNode*) left;
+  PGetNextNode* r = (PGetNextNode*) right;
+  LAbstractNode* lp = l->prototype;
+  LAbstractNode* rp = r->prototype;
+  vector<name_aliases> ln = lp->fieldNames;
+  vector<name_aliases> rn = rp->fieldNames;
 
-  ValueType vt = lp->fieldTypes[lpos];
+  ValueType vt = lp->fieldTypes[left_join_offset];
 
-  for (auto &lre : lres) {
-    for (auto &rre : rres) {
-      if (lre[lpos] != rre[rpos]) {
-        continue;
-      }
-
-      vector<Value> tmp;
-      for (int k = 0; k < ln.size(); k++) {
-        if (k != lpos) {
-          tmp.push_back(lre[k]);
-        }
-      }
-
-      for (size_t k = 0; k < rn.size(); k++) {
-        if (k != rpos) {
-          tmp.push_back(rre[k]);
-        }
-      }
-
-      tmp.push_back(lre[lpos]);
-      data.push_back(tmp);
-    }
+  if (right_node_table.empty()) {
+    LoadRightBlock();
   }
+
+  if (current_left_block.empty()) {
+    UpdateLeftBlock();
+  }
+
+  return utils::GetNextBlock(
+      current_left_pos, current_left_block,
+      current_right_pos, right_node_table,
+      [&] { UpdateLeftBlock(); },
+      [&](query_result &result, query_result_row &left_row, query_result_row &right_row) {
+          if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
+            return;
+          }
+
+          query_result_row tmp;
+          for (int k = 0; k < ln.size(); k++) {
+            if (k != left_join_offset) {
+              tmp.push_back(left_row[k]);
+            }
+          }
+
+          for (size_t k = 0; k < rn.size(); k++) {
+            if (k != right_join_offset) {
+              tmp.push_back(right_row[k]);
+            }
+          }
+
+          tmp.push_back(left_row[left_join_offset]);
+          result.push_back(tmp);
+      }
+  );
+}
+
+void PJoinNode::LoadRightBlock() {
+  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetNext();
+  current_right_pos = 0;
+}
+
+void PJoinNode::UpdateLeftBlock() {
+  current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNextBlock();
+  current_left_pos = 0;
 }
 
 size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
