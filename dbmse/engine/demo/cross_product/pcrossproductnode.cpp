@@ -1,8 +1,10 @@
 #include "pcrossproductnode.h"
 #include "../../utils/utils.h"
 
+using namespace std;
+
 PCrossProductNode::PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LCrossProductNode* source)
-  : PGetNextNode(source, left, right) {
+    : PGetNextNode(source, left, right) {
 }
 
 query_result PCrossProductNode::GetNextBlock() {
@@ -31,7 +33,7 @@ query_result PCrossProductNode::GetNextBlock() {
     }
 
     for (; current_right_pos < right_node_table.size(); current_right_pos++) {
-      auto& right_row = right_node_table[current_right_pos];
+      auto &right_row = right_node_table[current_right_pos];
       auto tmp_result = current_left_block[current_left_pos];
       utils::append_to_back(tmp_result, right_row);
       result_block.push_back(tmp_result);
@@ -60,12 +62,14 @@ void PCrossProductNode::UpdateLeftBlock() {
 }
 
 void PCrossProductNode::Print(int indent) {
-  for (int i = 0; i < indent; i++){
-    std::cout << " ";
+  for (int i = 0; i < indent; i++) {
+    cout << " ";
   }
-  std::cout << "CROSS-PRODUCT" << std::endl;
+  cout << "CROSS-PRODUCT" << endl;
   left->Print(indent + 2);
+  cout << endl;
   right->Print(indent + 2);
+  cout << endl;
 }
 
 PCrossProductNode::~PCrossProductNode() {
