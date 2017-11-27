@@ -45,6 +45,10 @@ query_result PCrossProductNode::GetNextBlock() {
   return result_block;
 }
 
+size_t PCrossProductNode::GetAttrNum() {
+  return left->GetAttrNum() + right->GetAttrNum();
+}
+
 void PCrossProductNode::LoadRightBlock() {
   right_node_table = dynamic_cast<PGetNextNode*>(right)->GetNext();
   current_right_pos = 0;
