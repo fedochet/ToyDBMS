@@ -98,7 +98,7 @@ query_result PJoinNode::GetNextBlock() {
 }
 
 void PJoinNode::LoadRightBlock() {
-  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetNext();
+  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
   current_right_pos = 0;
 }
 

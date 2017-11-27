@@ -31,7 +31,7 @@ void PGetNextNode::Initialize() {
   return;
 }
 
-query_result PGetNextNode::GetNext() {
+query_result PGetNextNode::GetAllData() {
   query_result result;
 
   auto next_block = GetNextBlock();
@@ -61,7 +61,7 @@ query_result PGetNextNode::GetNextBlock() {
 
 std::tuple<ErrCode, std::vector<Value>> PGetNextNode::GetRecord() {
   if (data.empty()) {
-    data = GetNext();
+    data = GetAllData();
   }
 
   return PResultNode::GetRecord();

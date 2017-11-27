@@ -31,7 +31,7 @@ class PGetNextNode : public PResultNode{
   public:
     explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
-    virtual query_result GetNext();
+    virtual query_result GetAllData();
     virtual query_result GetNextBlock();
     // getting access to data
     virtual void Initialize();
