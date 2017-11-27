@@ -110,7 +110,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Predicate& p){
   if (p.ptype == PT_EQUALS)
     stream << " == ";
   else
-    stream << " < ";
+    stream << " > ";
 
   if(p.vtype == VT_INT)
       stream << p.vint;
