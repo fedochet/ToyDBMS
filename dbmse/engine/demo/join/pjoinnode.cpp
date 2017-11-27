@@ -52,15 +52,12 @@ void PJoinNode::Initialize(){
   LAbstractNode* p = prototype;
   ptrdiff_t lpos, rpos;
 
-  for (int i = 0; i < lp->fieldNames.size(); i++){
+  for (size_t i = 0; i < lp->fieldNames.size(); i++){
     ptrdiff_t lpos1 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*)prototype)->offset1) - ln[i].begin();
     ptrdiff_t lpos2 = find(ln[i].begin(), ln[i].end(), ((LJoinNode*)prototype)->offset2) - ln[i].begin();
 
-    if(lpos1 <= ln.size() || lpos1 <= ln.size()){
-      if (lpos1 < lpos2)
-        lpos = lpos1;
-      else
-        lpos = lpos2;
+    if (lpos1 < ln[i].size() || lpos2 < ln[i].size()){
+      lpos = i;
       break;
     }
   }
@@ -69,11 +66,8 @@ void PJoinNode::Initialize(){
     ptrdiff_t rpos1 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*)prototype)->offset1) - rn[i].begin();
     ptrdiff_t rpos2 = find(rn[i].begin(), rn[i].end(), ((LJoinNode*)prototype)->offset2) - rn[i].begin();
 
-    if(rpos1 <= rn.size() || rpos1 <= rn.size()){
-      if (rpos1 < rpos2)
-        rpos = rpos1;
-      else
-        rpos = rpos2;
+    if(rpos1 < rn.size() || rpos2 < rn.size()){
+      rpos = i;
       break;
     }
   }
