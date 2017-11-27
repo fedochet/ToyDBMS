@@ -6,7 +6,7 @@ class PProjectNode : public PGetNextNode {
 public:
     explicit PProjectNode(PGetNextNode* from, LProjectNode* lProjectNode);
 
-    void Print(int indent) override;
+    void Print(size_t indent) override;
 
     std::vector<std::vector<Value>> GetNextBlock() override;
 

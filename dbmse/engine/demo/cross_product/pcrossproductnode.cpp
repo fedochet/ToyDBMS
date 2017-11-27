@@ -61,7 +61,7 @@ void PCrossProductNode::UpdateLeftBlock() {
   current_left_pos = 0;
 }
 
-void PCrossProductNode::Print(int indent) {
+void PCrossProductNode::Print(size_t indent) {
   for (int i = 0; i < indent; i++) {
     cout << " ";
   }

@@ -126,7 +126,7 @@ void PSelectNode::Initialize() {
 }
 
 
-void PSelectNode::Print(int indent) {
+void PSelectNode::Print(size_t indent) {
   for (int i = 0; i < indent; i++) {
     cout << " ";
   }

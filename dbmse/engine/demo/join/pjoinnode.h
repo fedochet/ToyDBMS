@@ -30,7 +30,7 @@ class PJoinNode : public PGetNextNode{
     ~PJoinNode();
     std::vector<std::vector<Value>> GetNext() override;
     void Initialize() override;
-    void Print(int indent) override;
+    void Print(size_t indent) override;
   private:
     int pos;
 };

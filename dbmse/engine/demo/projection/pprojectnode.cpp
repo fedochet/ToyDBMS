@@ -22,7 +22,7 @@ query_result PProjectNode::GetNextBlock() {
   return result_block;
 }
 
-void PProjectNode::Print(int indent) {
+void PProjectNode::Print(size_t indent) {
   for (int i = 0; i < indent; i++){
     std::cout << " ";
   }

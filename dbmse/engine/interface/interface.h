@@ -103,7 +103,7 @@ class PResultNode{
     // returns number of attributes
     virtual size_t GetAttrNum() = 0;
     // prints tree
-    virtual void Print(int indent) = 0;
+    virtual void Print(size_t indent) = 0;
     // used to get attribute info
     LAbstractNode* prototype;
     // returns error status and data, if possible

@@ -32,7 +32,7 @@ class PSelectNode : public PGetNextNode{
 
     void Initialize() override;
     // print node
-    virtual void Print(int indent) override;
+    virtual void Print(size_t indent) override;
   private:
     BaseTable table;
     std::vector<Predicate> predicates;

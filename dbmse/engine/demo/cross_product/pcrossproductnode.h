@@ -8,7 +8,7 @@ public:
 
     size_t GetAttrNum() override;
 
-    void Print(int indent) override;
+    void Print(size_t indent) override;
     ~PCrossProductNode() override;
 
 private:

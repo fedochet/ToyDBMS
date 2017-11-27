@@ -106,7 +106,7 @@ void PJoinNode::Initialize(){
 
 }
 
-void PJoinNode::Print(int indent){
+void PJoinNode::Print(size_t indent){
   for (int i = 0; i < indent; i++){
     cout << " ";
   }
