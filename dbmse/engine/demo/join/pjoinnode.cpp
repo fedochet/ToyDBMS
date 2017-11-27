@@ -51,6 +51,10 @@ void PJoinNode::Initialize() {
   right_join_offset = FindColumnOffset(rn);
 }
 
+size_t PJoinNode::GetAttrNum() {
+  return left->GetAttrNum() + right->GetAttrNum() - 1;
+}
+
 query_result PJoinNode::GetNextBlock() {
   PGetNextNode* l = (PGetNextNode*) left;
   PGetNextNode* r = (PGetNextNode*) right;

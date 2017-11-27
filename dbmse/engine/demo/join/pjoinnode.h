@@ -33,6 +33,8 @@ class PJoinNode : public PGetNextNode{
 
     query_result GetNextBlock() override;
 
+    size_t GetAttrNum() override;
+
 private:
     query_result right_node_table;
     query_result current_left_block;
