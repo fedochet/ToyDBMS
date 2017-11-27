@@ -1,5 +1,6 @@
 #include "pcrossproductnode.h"
 #include "../../utils/utils.h"
+#include "../../utils/bd_utils.h"
 
 using namespace std;
 
@@ -17,33 +18,14 @@ query_result PCrossProductNode::GetNextBlock() {
     UpdateLeftBlock();
   }
 
-  query_result result_block;
-  while (result_block.size() < BLOCK_SIZE
-         && !right_node_table.empty()
-         && !current_left_block.empty()) {
-
-    if (current_right_pos >= right_node_table.size()) {
-      current_right_pos = 0;
-      current_left_pos++;
-    }
-
-    if (current_left_pos >= current_left_block.size()) {
-      UpdateLeftBlock();
-      break;
-    }
-
-    for (; current_right_pos < right_node_table.size(); current_right_pos++) {
-      auto &right_row = right_node_table[current_right_pos];
-      auto tmp_result = current_left_block[current_left_pos];
-      utils::append_to_back(tmp_result, right_row);
-      result_block.push_back(tmp_result);
-
-      if (result_block.size() >= BLOCK_SIZE) {
-        current_right_pos++;
-        break;
-      }
-    }
-  }
+  query_result result_block = utils::GetNextBlock(
+      current_left_pos, current_left_block,
+      current_right_pos, right_node_table,
+      [&] { UpdateLeftBlock(); },
+      [&](query_result &result, query_result_row left_row, query_result_row &right_row) {
+          utils::append_to_back(left_row, right_row);
+          result.push_back(left_row);
+      });
 
   return result_block;
 }

@@ -21,6 +21,6 @@ set(SOURCE_FILES
         dbmse/engine/interface/interface.cpp
         dbmse/engine/interface/interface.h
         dbmse/engine/interface/lprojectnode.cpp
-        )
+        dbmse/engine/utils/bd_utils.h)
 
 add_executable(ToyDBMS ${SOURCE_FILES})
