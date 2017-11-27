@@ -22,7 +22,7 @@
 #include <vector>
 #include "../interface/interface.h"
 
-static const size_t BLOCK_SIZE = 4;
+static const size_t BLOCK_SIZE = 2;
 
 typedef std::vector<Value> query_result_row;
 typedef std::vector<query_result_row> query_result;

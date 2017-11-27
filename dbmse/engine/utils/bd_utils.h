@@ -21,7 +21,7 @@ namespace utils {
 
         if (left_pos >= left_block.size()) {
           update_block();
-          break;
+          continue;
         }
 
         for (; right_pos < right_table.size(); right_pos++) {
