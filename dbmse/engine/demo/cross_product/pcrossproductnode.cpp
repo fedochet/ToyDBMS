@@ -51,7 +51,7 @@ void PCrossProductNode::LoadRightBlock() {
 }
 
 void PCrossProductNode::UpdateLeftBlock() {
-  current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNext();
+  current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNextBlock();
   current_left_pos = 0;
 }
 
