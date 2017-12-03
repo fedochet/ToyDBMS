@@ -72,32 +72,57 @@ query_result PJoinNode::GetNextBlock() {
     UpdateLeftBlock();
   }
 
-  return utils::GetNextBlock(
-      current_left_pos, current_left_block,
-      current_right_pos, right_node_table,
-      [&] { UpdateLeftBlock(); },
-      [&](query_result &result, query_result_row &left_row, query_result_row &right_row) {
-          if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
-            return;
-          }
+  size_t &left_pos = current_left_pos;
+  size_t &right_pos = current_right_pos;
+  auto update_block = [&] { UpdateLeftBlock(); };
 
-          query_result_row tmp;
-          for (int k = 0; k < ln.size(); k++) {
-            if (k != left_join_offset) {
-              tmp.push_back(left_row[k]);
-            }
-          }
+  query_result result_block;
+  while (result_block.size() < BLOCK_SIZE
+         && !right_node_table.empty()
+         && !current_left_block.empty()) {
 
-          for (size_t k = 0; k < rn.size(); k++) {
-            if (k != right_join_offset) {
-              tmp.push_back(right_row[k]);
-            }
-          }
+    if (right_pos >= right_node_table.size()) {
+      right_pos = 0;
+      left_pos++;
+    }
 
-          tmp.push_back(left_row[left_join_offset]);
-          result.push_back(tmp);
+    if (left_pos >= current_left_block.size()) {
+      update_block();
+      continue;
+    }
+
+    for (; right_pos < right_node_table.size(); right_pos++) {
+
+      auto &left_row = current_left_block[left_pos];
+      auto &right_row = right_node_table[right_pos];
+
+      if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
+        continue;
       }
-  );
+
+      query_result_row tmp;
+      for (int k = 0; k < ln.size(); k++) {
+        if (k != left_join_offset) {
+          tmp.push_back(left_row[k]);
+        }
+      }
+
+      for (size_t k = 0; k < rn.size(); k++) {
+        if (k != right_join_offset) {
+          tmp.push_back(right_row[k]);
+        }
+      }
+
+      tmp.push_back(left_row[left_join_offset]);
+      result_block.push_back(tmp);
+      if (result_block.size() >= BLOCK_SIZE) {
+        right_pos++;
+        break;
+      }
+    }
+  }
+
+  return result_block;
 }
 
 void PJoinNode::Rewind() {
