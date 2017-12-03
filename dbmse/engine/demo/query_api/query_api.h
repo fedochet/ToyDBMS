@@ -42,7 +42,7 @@ void ExecuteQuery(PResultNode* query){
   ErrCode ec = std::get<0>(res);
   std::vector<Value> vals = std::get<1>(res);
   while(ec == EC_OK){
-    for (int i = 0; i < query->GetAttrNum(); i++){
+    for (size_t i = 0; i < query->GetAttrNum(); i++){
       if(vals[i].vtype == VT_INT)
         std::cout << vals[i].vint << " ";
       else if(vals[i].vtype == VT_STRING)

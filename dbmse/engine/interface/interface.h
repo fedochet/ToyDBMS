@@ -82,7 +82,7 @@ class LSelectNode : public LAbstractNode{
     ~LSelectNode();
     std::vector<Predicate> predicates;
 private:
-    int iteratorpos;
+    size_t iteratorpos;
     BaseTable table;
 };
 

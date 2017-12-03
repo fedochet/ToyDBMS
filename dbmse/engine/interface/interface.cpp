@@ -64,8 +64,8 @@ LJoinNode::LJoinNode(LAbstractNode* left, LAbstractNode* right,
   std::vector<std::string> match;
   ValueType vt;
   COLUMN_SORT cs;
-  for (int i = 0; i < left->fieldNames.size(); i++) {
-    for (int j = 0; j < right->fieldNames.size(); j++) {
+  for (size_t i = 0; i < left->fieldNames.size(); i++) {
+    for (size_t j = 0; j < right->fieldNames.size(); j++) {
       std::vector<std::string> l = left->fieldNames[i];
       std::vector<std::string> r = right->fieldNames[j];
 
@@ -87,7 +87,7 @@ LJoinNode::LJoinNode(LAbstractNode* left, LAbstractNode* right,
     }
   }
 
-  for (int i = 0; i < left->fieldNames.size(); i++) {
+  for (size_t i = 0; i < left->fieldNames.size(); i++) {
     std::vector<std::string> l = left->fieldNames[i];
     if (std::find(l.begin(), l.end(), offset1) == l.end())
       if (std::find(l.begin(), l.end(), offset2) == l.end()) {
@@ -97,7 +97,7 @@ LJoinNode::LJoinNode(LAbstractNode* left, LAbstractNode* right,
       }
   }
 
-  for (int i = 0; i < right->fieldNames.size(); i++) {
+  for (size_t i = 0; i < right->fieldNames.size(); i++) {
     std::vector<std::string> r = right->fieldNames[i];
     if (std::find(r.begin(), r.end(), offset1) == r.end())
       if (std::find(r.begin(), r.end(), offset2) == r.end()) {

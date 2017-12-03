@@ -23,7 +23,7 @@ query_result PProjectNode::GetNextBlock() {
 }
 
 void PProjectNode::Print(size_t indent) {
-  for (int i = 0; i < indent; i++){
+  for (size_t i = 0; i < indent; i++){
     std::cout << " ";
   }
   std::cout << "Project Node, keeped names: ";

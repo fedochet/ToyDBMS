@@ -13,7 +13,8 @@ int main() {
     ExecuteQuery(p_node);
     cout << endl;
 
-    delete select_node, p_node;
+    delete select_node;
+    delete p_node;
   }
 
   {
@@ -24,7 +25,8 @@ int main() {
     ExecuteQuery(p_node);
     cout << endl;
 
-    delete select_node, p_node;
+    delete select_node;
+    delete p_node;
   }
 
   {
@@ -35,7 +37,8 @@ int main() {
     ExecuteQuery(p_node);
     cout << endl;
 
-    delete select_node, p_node;
+    delete select_node;
+    delete p_node;
   }
 
   {
@@ -54,7 +57,8 @@ int main() {
     p_node->Print(0);
     ExecuteQuery(p_node);
 
-    delete projection, p_node;
+    delete projection;
+    delete p_node;
 
   }
 

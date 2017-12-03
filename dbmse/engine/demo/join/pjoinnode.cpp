@@ -89,7 +89,7 @@ query_result PJoinNode::GetNextBlock() {
       }
 
       query_result_row tmp;
-      for (int k = 0; k < ln.size(); k++) {
+      for (size_t k = 0; k < ln.size(); k++) {
         if (k != left_join_offset) {
           tmp.push_back(left_row[k]);
         }
@@ -148,8 +148,8 @@ size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
   auto offset_name_2 = ((LJoinNode*) prototype)->offset2;
 
   for (size_t i = 0; i < names.size(); i++) {
-    ptrdiff_t lpos1 = utils::find(names[i], offset_name_1);
-    ptrdiff_t lpos2 = utils::find(names[i], offset_name_2);
+    size_t lpos1 = utils::find(names[i], offset_name_1);
+    size_t lpos2 = utils::find(names[i], offset_name_2);
 
     if (lpos1 < names[i].size() || lpos2 < names[i].size()) {
       return i;
@@ -162,7 +162,7 @@ size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
 }
 
 void PJoinNode::Print(size_t indent) {
-  for (int i = 0; i < indent; i++) {
+  for (size_t i = 0; i < indent; i++) {
     cout << " ";
   }
   cout << "NL-JOIN: " << ((LJoinNode*) prototype)->offset1 << "=" << ((LJoinNode*) prototype)->offset2 << endl;
