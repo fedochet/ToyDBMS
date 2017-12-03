@@ -36,9 +36,6 @@ class PGetNextNode : public PResultNode {
     virtual query_result GetNextBlock();
     virtual void Rewind();
 
-    // getting access to data
-    __attribute_deprecated__
-    virtual void Initialize();
     // get number of attributes
     size_t GetAttrNum() override;
     // returns error status and data, if possible

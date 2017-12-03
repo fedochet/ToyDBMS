@@ -26,7 +26,7 @@ class PJoinNode : public PGetNextNode{
   public:
     PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
     ~PJoinNode();
-    void Initialize() override;
+
     void Print(size_t indent) override;
 
     query_result GetNextBlock() override;

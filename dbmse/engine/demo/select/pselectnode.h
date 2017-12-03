@@ -29,7 +29,6 @@ class PSelectNode : public PGetNextNode{
     PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
     ~PSelectNode() override = default;
 
-    void Initialize() override;
     // print node
     virtual void Print(size_t indent) override;
 

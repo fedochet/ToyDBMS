@@ -85,8 +85,6 @@ matches_predicates(const BaseTable &table, const vector<Value> &record, const ve
   return true;
 }
 
-void PSelectNode::Initialize() {}
-
 void PSelectNode::Print(size_t indent) {
   for (size_t i = 0; i < indent; i++) {
     cout << " ";

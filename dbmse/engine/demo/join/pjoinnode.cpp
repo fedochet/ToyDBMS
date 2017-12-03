@@ -41,8 +41,6 @@ PJoinNode::~PJoinNode() {
   delete right;
 }
 
-void PJoinNode::Initialize() {}
-
 size_t PJoinNode::GetAttrNum() {
   return left->GetAttrNum() + right->GetAttrNum() - 1;
 }

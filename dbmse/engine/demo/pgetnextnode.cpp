@@ -24,11 +24,6 @@
 
 PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
     : PResultNode(left, right, source) {
-  Initialize();
-}
-
-void PGetNextNode::Initialize() {
-  return;
 }
 
 query_result PGetNextNode::GetAllData() {
