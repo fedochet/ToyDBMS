@@ -165,17 +165,17 @@ LUniqueNode::~LUniqueNode(){
 /* Physical nodes*/
 
 PResultNode::PResultNode(PResultNode* left, PResultNode* right, LAbstractNode* p)
-    : prototype(p), left(left), right(right), pos(0) {}
+    : prototype(p), left(left), right(right), record_position(0) {}
 
 PResultNode::~PResultNode(){
 }
 
 std::tuple<ErrCode, std::vector<Value>> PResultNode::GetRecord(){
   std::vector<Value> vals;
-  if (pos == data.size()) return std::make_tuple(EC_FINISH, vals);
+  if (record_position == data.size()) return std::make_tuple(EC_FINISH, vals);
   for(int i = 0; i < GetAttrNum(); i++){
-    vals.push_back(data[pos][i]);
+    vals.push_back(data[record_position][i]);
   }
-  pos++;
+  record_position++;
   return std::make_tuple(EC_OK, vals);
 }

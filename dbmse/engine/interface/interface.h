@@ -116,7 +116,7 @@ protected:
     std::vector<std::vector<Value>> data;
 
 private:
-    size_t pos;
+    size_t record_position;
 };
 
 #endif // INTERFACE_H
