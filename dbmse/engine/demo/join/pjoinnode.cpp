@@ -17,7 +17,6 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#include<cstddef>
 #include<algorithm>
 
 #include "pjoinnode.h"
@@ -30,7 +29,11 @@ typedef vector<string> name_aliases;
 
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
                      LAbstractNode* p) : PGetNextNode(p, left, right) {
-  Initialize();
+
+  vector<name_aliases> ln = left->prototype->fieldNames;
+  vector<name_aliases> rn = right->prototype->fieldNames;
+  left_join_offset = FindColumnOffset(ln);
+  right_join_offset = FindColumnOffset(rn);
 }
 
 PJoinNode::~PJoinNode() {
@@ -38,17 +41,7 @@ PJoinNode::~PJoinNode() {
   delete right;
 }
 
-void PJoinNode::Initialize() {
-  PGetNextNode* l = (PGetNextNode*) left;
-  PGetNextNode* r = (PGetNextNode*) right;
-  LAbstractNode* lp = l->prototype;
-  LAbstractNode* rp = r->prototype;
-  vector<name_aliases> ln = lp->fieldNames;
-  vector<name_aliases> rn = rp->fieldNames;
-
-  left_join_offset = FindColumnOffset(ln);
-  right_join_offset = FindColumnOffset(rn);
-}
+void PJoinNode::Initialize() {}
 
 size_t PJoinNode::GetAttrNum() {
   return left->GetAttrNum() + right->GetAttrNum() - 1;
@@ -139,7 +132,7 @@ bool PJoinNode::UpdateRightBlock() {
   current_right_pos = 0;
 
   if (current_right_block.empty()) {
-    right_node -> Rewind();
+    right_node->Rewind();
     current_right_block = right_node->GetNextBlock();
     return true;
   }
