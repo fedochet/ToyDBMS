@@ -22,20 +22,20 @@
 #include "pgetnextnode.h"
 #include "../utils/utils.h"
 
+using namespace std;
+
 PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
     : PResultNode(left, right, source) {
 }
 
-query_result PGetNextNode::GetAllData() {
-  query_result result;
+void PGetNextNode::FetchResultTable() {
+  data.clear();
 
   auto next_block = GetNextBlock();
   while (!next_block.empty()) {
-    utils::append_to_back(result, next_block);
+    utils::append_to_back(data, next_block);
     next_block = GetNextBlock();
   }
-
-  return result;
 }
 
 size_t PGetNextNode::GetAttrNum() {
@@ -58,9 +58,9 @@ void PGetNextNode::Rewind() {
   current_position = 0;
 }
 
-std::tuple<ErrCode, std::vector<Value>> PGetNextNode::GetRecord() {
+tuple<ErrCode, query_result_row> PGetNextNode::GetRecord() {
   if (data.empty()) {
-    data = GetAllData();
+    FetchResultTable();
   }
 
   return PResultNode::GetRecord();

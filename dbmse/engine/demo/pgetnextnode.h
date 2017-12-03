@@ -31,17 +31,15 @@ class PGetNextNode : public PResultNode {
   public:
     explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
-    __attribute_deprecated__
-    virtual query_result GetAllData();
     virtual query_result GetNextBlock();
     virtual void Rewind();
 
     // get number of attributes
     size_t GetAttrNum() override;
     // returns error status and data, if possible
-    // TODO reimplement it
-    virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
+    std::tuple<ErrCode, query_result_row> GetRecord() override;
 
 protected:
+    void FetchResultTable();
     size_t current_position{0};
 };
