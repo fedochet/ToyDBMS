@@ -35,6 +35,11 @@ void PProjectNode::Print(size_t indent) {
   cout << endl;
 }
 
+void PProjectNode::Rewind() {
+  PGetNextNode::Rewind();
+  dynamic_cast<PGetNextNode*>(left)->Rewind();
+}
+
 size_t PProjectNode::GetAttrNum() {
   return prototype->fieldNames.size();
 }

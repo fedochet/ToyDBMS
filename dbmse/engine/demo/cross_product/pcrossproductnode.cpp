@@ -54,6 +54,17 @@ void PCrossProductNode::Print(size_t indent) {
   right->Print(indent + 2);
 }
 
+void PCrossProductNode::Rewind() {
+  current_left_pos = 0;
+  current_right_pos = 0;
+
+  current_left_block.empty();
+  right_node_table.empty();
+
+  dynamic_cast<PGetNextNode*>(left)->Rewind();
+  dynamic_cast<PGetNextNode*>(right)->Rewind();
+}
+
 PCrossProductNode::~PCrossProductNode() {
   delete left;
   delete right;

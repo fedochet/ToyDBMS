@@ -32,6 +32,7 @@ class PJoinNode : public PGetNextNode{
     void Print(size_t indent) override;
 
     query_result GetNextBlock() override;
+    void Rewind() override;
 
     size_t GetAttrNum() override;
 

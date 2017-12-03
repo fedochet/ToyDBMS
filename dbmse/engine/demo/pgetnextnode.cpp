@@ -60,6 +60,7 @@ query_result PGetNextNode::GetNextBlock() {
 }
 
 void PGetNextNode::Rewind() {
+  current_position = 0;
 }
 
 std::tuple<ErrCode, std::vector<Value>> PGetNextNode::GetRecord() {

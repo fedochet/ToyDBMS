@@ -100,6 +100,17 @@ query_result PJoinNode::GetNextBlock() {
   );
 }
 
+void PJoinNode::Rewind() {
+  current_left_pos = 0;
+  current_right_pos = 0;
+
+  current_left_block.empty();
+  right_node_table.empty();
+
+  dynamic_cast<PGetNextNode*>(left)->Rewind();
+  dynamic_cast<PGetNextNode*>(right)->Rewind();
+}
+
 void PJoinNode::LoadRightBlock() {
   right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
   current_right_pos = 0;
