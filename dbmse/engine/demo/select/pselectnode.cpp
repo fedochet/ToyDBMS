@@ -92,11 +92,7 @@ void PSelectNode::Initialize() {
   ifstream table_file(table.relpath);
   if (table_file) {
     // skipping first 4 lines
-    getline(table_file, line);
-    getline(table_file, line);
-    getline(table_file, line);
-    getline(table_file, line);
-
+    utils::skip_lines(table_file, 4);
     while (getline(table_file, line)) {
       vector<Value> tmp;
       string word;
