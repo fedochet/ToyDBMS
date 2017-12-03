@@ -16,23 +16,34 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
-
-#ifndef PJOINNODE_H
-#define PJOINNODE_H
+#pragma once
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
 
 class PJoinNode : public PGetNextNode{
   public:
     PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
     ~PJoinNode();
-    virtual std::vector<std::vector<Value>> GetNext();
-    virtual void Initialize();
-    virtual void Print(int indent);
-  private:
-    int pos;
-};
 
-#endif // PJOINNODE_H
+    void Print(size_t indent) override;
+
+    query_result GetNextBlock() override;
+    void Rewind() override;
+
+    size_t GetAttrNum() override;
+
+private:
+    query_result current_right_block;
+    query_result current_left_block;
+    size_t current_left_pos;
+    size_t current_right_pos;
+
+    void UpdateLeftBlock();
+    bool UpdateRightBlock();
+
+    size_t left_join_offset;
+    size_t right_join_offset;
+    size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
+};

@@ -4,7 +4,7 @@
 // More details regarding the course can be found here: www.math.spbu.ru/user/chernishev/
 // CHANGELOG:
 // 0.4: no chance for efficiency competition, so, this year I reoriented task towards ideas:
-//      1) tried to remove C code, now we are using lots of std:: stuff
+//      1) tried to remove C code, now we are using lots of  stuff
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
@@ -19,27 +19,22 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 
-#include <string.h>
 #include <vector>
 #include <sstream>
 
 #include "pselectnode.h"
+#include "../../utils/utils.h"
 
-PSelectNode::PSelectNode(LAbstractNode* p, std::vector<Predicate> predicate)
-    : PGetNextNode()
-    , table(dynamic_cast<LSelectNode*>(p)->GetBaseTable())
-    , predicates(predicate)
-    , pos(0) {
-  prototype = p;
-  data.clear();
-  Initialize();
+using namespace std;
+
+PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
+    : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
+      pos(0) {
 }
 
-template <typename T>
-bool apply_comparison_predicate(const PredicateType &type, const T& original, const T& compare_to)
-{
+template<typename T>
+bool apply_comparison_predicate(const PredicateType &type, const T &original, const T &compare_to) {
   switch (type) {
     case PT_EQUALS:
       if (original == compare_to) {
@@ -65,10 +60,11 @@ bool apply_string_predicate(const Value &compared_attribute, const Predicate &pr
   return apply_comparison_predicate(predicate.ptype, compared_attribute.vstr, predicate.vstr);
 }
 
-bool matches_predicates(const BaseTable& table, const std::vector<Value> &record, const std::vector<Predicate> &predicates) {
-  for (auto& predicate: predicates) {
+bool
+matches_predicates(const BaseTable &table, const vector<Value> &record, const vector<Predicate> &predicates) {
+  for (auto &predicate: predicates) {
     if (table.vtypes[predicate.attribute] == predicate.vtype) {
-      auto& compared_attribute = record[predicate.attribute];
+      auto &compared_attribute = record[predicate.attribute];
       switch (predicate.vtype) {
         case VT_INT:
           if (!apply_int_predicate(compared_attribute, predicate)) {
@@ -81,7 +77,7 @@ bool matches_predicates(const BaseTable& table, const std::vector<Value> &record
           }
           break;
         default:
-          throw std::runtime_error("Could not match predicate type!");
+          throw runtime_error("Could not match predicate type!");
       }
     }
   }
@@ -89,55 +85,67 @@ bool matches_predicates(const BaseTable& table, const std::vector<Value> &record
   return true;
 }
 
-void PSelectNode::Initialize(){
-  std::string line, word;
-  std::ifstream f(table.relpath);
-  if(f.is_open()){
+void PSelectNode::Print(size_t indent) {
+  for (size_t i = 0; i < indent; i++) {
+    cout << " ";
+  }
+
+  cout << "SCAN " << table.relpath << " with predicates ";
+
+  if (!predicates.empty()) {
+    cout << predicates[0];
+  } else {
+    cout << "NULL" << endl;
+  }
+
+  if (left) left->Print(indent + 2);
+  if (right) right->Print(indent + 2);
+}
+
+
+query_result PSelectNode::GetNextBlock() {
+  query_result block;
+
+  ifstream table_file(table.relpath);
+  if (table_file) {
     // skipping first 4 lines
-    getline(f, line);
-    getline(f, line);
-    getline(f, line);
-    getline(f, line);
+    utils::skip_lines(table_file, 4);
+    utils::skip_lines(table_file, current_position);
 
-    while (getline(f, line)){
-      std::vector<Value> tmp;
-      std::istringstream iss(line, std::istringstream::in);
-      int i = 0;
-      while (iss >> word){
-        // Yeah, no predicates :) -- Homework
-        Value h;
-        if (prototype->fieldTypes[i] == VT_INT) {
-          h = Value(std::stoi(word));
-        } else {
-          h = Value(word);
-        }
-        tmp.push_back(h);
-        i++;
-      }
-
-      if (matches_predicates(this->table, tmp, predicates)) {
-        data.push_back(tmp);
+    string line;
+    while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
+      current_position++;
+      vector<Value> row = ParseRow(line);
+      if (matches_predicates(this->table, row, predicates)) {
+        block.push_back(row);
       }
     }
-    f.close();
-  } else std::cout << "Unable to open file";
-}
 
-std::vector<std::vector<Value>> PSelectNode::GetNext(){
-  return data;
-}
-
-void PSelectNode::Print(int indent) {
-  for (int i = 0; i < indent; i++) {
-    std::cout << " ";
-  }
-  std::cout << "SCAN " << table.relpath << " with predicates ";
-  if (!predicates.empty()) {
-    std::cout << predicates[0];
+    table_file.close();
   } else {
-    std::cout << "NULL" << std::endl;
+    cout << "Unable to open file";
   }
-  if (left != NULL) left->Print(indent + 2);
-  if (right != NULL) right->Print(indent + 2);
+
+  return block;
+
+}
+
+vector<Value> PSelectNode::ParseRow(const string &line) const {
+  vector<Value> tmp;
+  string word;
+  istringstream iss(line, ios_base::in);
+  int field_index = 0;
+  while (iss >> word) {
+    // Yeah, no predicates :) -- Homework
+    Value h;
+    if (prototype->fieldTypes[field_index] == VT_INT) {
+      h = Value(stoi(word));
+    } else {
+      h = Value(word);
+    }
+    tmp.push_back(h);
+    field_index++;
+  }
+  return tmp;
 }
 

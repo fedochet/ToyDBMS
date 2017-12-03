@@ -16,10 +16,8 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
+#pragma once
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
-#include <string.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -54,7 +52,7 @@ class LCrossProductNode : public LAbstractNode{
 class LJoinNode : public LAbstractNode{
   public:
     // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2, int memorylimit);
+    LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2, int memorylimit = 0);
     ~LJoinNode();
     // attributes to perform equi-join on
     std::string offset1, offset2;
@@ -84,7 +82,7 @@ class LSelectNode : public LAbstractNode{
     ~LSelectNode();
     std::vector<Predicate> predicates;
 private:
-    int iteratorpos;
+    size_t iteratorpos;
     BaseTable table;
 };
 
@@ -96,23 +94,25 @@ class LUniqueNode : public LAbstractNode{
 
 // Physical node interface (result), should be used for automatic testing
 
-class PResultNode{
-  public:
+class PResultNode {
+
+public:
     PResultNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
     virtual ~PResultNode();
     // returns number of attributes
-    virtual int GetAttrNum() = 0;
+    virtual size_t GetAttrNum() = 0;
     // prints tree
-    virtual void Print(int indent) = 0;
+    virtual void Print(size_t indent) = 0;
     // used to get attribute info
     LAbstractNode* prototype;
     // returns error status and data, if possible
     virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
-  protected:
+
+protected:
     PResultNode* left;
     PResultNode* right;
     std::vector<std::vector<Value>> data;
-    int pos;
-};
 
-#endif // INTERFACE_H
+private:
+    size_t record_position;
+};

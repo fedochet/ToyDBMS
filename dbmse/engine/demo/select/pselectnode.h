@@ -17,26 +17,27 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PSELECTNODE_H
-#define PSELECTNODE_H
+#pragma once
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
 
 class PSelectNode : public PGetNextNode{
   public:
     PSelectNode() = default;
     PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
     ~PSelectNode() override = default;
-    std::vector<std::vector<Value>> GetNext() override;
-    void Initialize() override;
+
     // print node
-    virtual void Print(int indent) override;
-  private:
+    virtual void Print(size_t indent) override;
+
+    query_result GetNextBlock() override;
+
+private:
     BaseTable table;
     std::vector<Predicate> predicates;
-    int pos;
-};
+    size_t pos;
 
-#endif // PSELECTNODE_H
+    std::vector<Value> ParseRow(const std::string &line) const;
+};

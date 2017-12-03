@@ -20,26 +20,48 @@
 #include <tuple>
 
 #include "pgetnextnode.h"
+#include "../utils/utils.h"
 
-PGetNextNode::PGetNextNode(): PResultNode(NULL, NULL, NULL){
-  Initialize();
+using namespace std;
+
+PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
+    : PResultNode(left, right, source) {
 }
 
-PGetNextNode::PGetNextNode(PResultNode* left, PResultNode* right, LAbstractNode* source):
-                                                                  PResultNode(left, right, source){
-  Initialize();
+void PGetNextNode::FetchResultTable() {
+  data.clear();
+
+  auto next_block = GetNextBlock();
+  while (!next_block.empty()) {
+    utils::append_to_back(data, next_block);
+    next_block = GetNextBlock();
+  }
 }
 
-void PGetNextNode::Initialize(){
-  return;
-}
-
-std::vector<std::vector<Value>> PGetNextNode::GetNext(){
-  return std::vector<std::vector<Value>>();
-}
-
-int PGetNextNode::GetAttrNum(){
+size_t PGetNextNode::GetAttrNum() {
   return prototype->fieldNames.size();
 }
 
+query_result PGetNextNode::GetNextBlock() {
+  if (current_position > data.size()) {
+    return query_result();
+  }
 
+  auto block_start = data.begin() + current_position;
+  auto block_end = min(block_start + BLOCK_SIZE, data.end());
+  current_position += block_end - block_start;
+
+  return query_result(block_start, block_end);
+}
+
+void PGetNextNode::Rewind() {
+  current_position = 0;
+}
+
+tuple<ErrCode, query_result_row> PGetNextNode::GetRecord() {
+  if (data.empty()) {
+    FetchResultTable();
+  }
+
+  return PResultNode::GetRecord();
+}

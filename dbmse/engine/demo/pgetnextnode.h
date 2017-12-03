@@ -17,25 +17,29 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PGETNEXTNODE_H
-#define PGETNEXTNODE_H
+#pragma once
+
 #include <vector>
 #include "../interface/interface.h"
 
-class PGetNextNode : public PResultNode{
+static const size_t BLOCK_SIZE = 4;
+
+typedef std::vector<Value> query_result_row;
+typedef std::vector<query_result_row> query_result;
+
+class PGetNextNode : public PResultNode {
   public:
-    PGetNextNode();
-    PGetNextNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
+    explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
-    virtual std::vector<std::vector<Value>> GetNext();
-    // getting access to data
-    virtual void Initialize();
+    virtual query_result GetNextBlock();
+    virtual void Rewind();
+
     // get number of attributes
-    virtual int GetAttrNum();
-  protected:
+    size_t GetAttrNum() override;
+    // returns error status and data, if possible
+    std::tuple<ErrCode, query_result_row> GetRecord() override;
 
-  private:
-
+protected:
+    void FetchResultTable();
+    size_t current_position{0};
 };
-
-#endif // PGETNEXTNODE_H
