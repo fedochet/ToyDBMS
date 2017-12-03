@@ -71,6 +71,7 @@ bool PCrossProductNode::UpdateRightBlock() {
 
   if (current_right_block.empty()) {
     right_node->Rewind();
+    current_right_block = right_node->GetNextBlock();
     return true;
   }
 
