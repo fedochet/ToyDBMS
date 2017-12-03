@@ -13,12 +13,11 @@ public:
     ~PCrossProductNode() override;
 
 private:
-    query_result right_node_table;
     query_result current_left_block;
+    query_result current_right_block;
     size_t current_left_pos;
     size_t current_right_pos;
 
     void UpdateLeftBlock();
-
-    void LoadRightBlock();
+    bool UpdateRightBlock();
 };

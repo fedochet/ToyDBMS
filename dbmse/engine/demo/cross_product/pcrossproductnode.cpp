@@ -9,23 +9,43 @@ PCrossProductNode::PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LC
 }
 
 query_result PCrossProductNode::GetNextBlock() {
-
-  if (right_node_table.empty()) {
-    LoadRightBlock();
-  }
-
   if (current_left_block.empty()) {
     UpdateLeftBlock();
   }
 
-  query_result result_block = utils::GetNextBlock(
-      current_left_pos, current_left_block,
-      current_right_pos, right_node_table,
-      [&] { UpdateLeftBlock(); },
-      [&](query_result &result, query_result_row left_row, query_result_row &right_row) {
-          utils::append_to_back(left_row, right_row);
-          result.push_back(left_row);
-      });
+  if (current_right_block.empty()) {
+    UpdateRightBlock();
+  }
+
+  query_result result_block;
+
+  while (result_block.size() < BLOCK_SIZE
+         && !current_right_block.empty()
+         && !current_left_block.empty()) {
+
+    if (current_right_pos >= current_right_block.size()) {
+      if (UpdateRightBlock()) {
+        current_left_pos++;
+      }
+    }
+
+    if (current_left_pos >= current_left_block.size()) {
+      UpdateLeftBlock();
+      break;
+    }
+
+    for (; current_right_pos < current_right_block.size(); current_right_pos++) {
+      auto &right_row = current_right_block[current_right_pos];
+      auto tmp_result = current_left_block[current_left_pos];
+      utils::append_to_back(tmp_result, right_row);
+      result_block.push_back(tmp_result);
+
+      if (result_block.size() >= BLOCK_SIZE) {
+        current_right_pos++;
+        break;
+      }
+    }
+  }
 
   return result_block;
 }
@@ -34,14 +54,27 @@ size_t PCrossProductNode::GetAttrNum() {
   return left->GetAttrNum() + right->GetAttrNum();
 }
 
-void PCrossProductNode::LoadRightBlock() {
-  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
-  current_right_pos = 0;
-}
+//void PCrossProductNode::LoadRightBlock() {
+//  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
+//  current_right_table_pos = 0;
+//}
 
 void PCrossProductNode::UpdateLeftBlock() {
   current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNextBlock();
   current_left_pos = 0;
+}
+
+bool PCrossProductNode::UpdateRightBlock() {
+  auto right_node = dynamic_cast<PGetNextNode*>(right);
+  current_right_block = right_node->GetNextBlock();
+  current_right_pos = 0;
+
+  if (current_right_block.empty()) {
+    right_node->Rewind();
+    return true;
+  }
+
+  return false;
 }
 
 void PCrossProductNode::Print(size_t indent) {
@@ -59,7 +92,7 @@ void PCrossProductNode::Rewind() {
   current_right_pos = 0;
 
   current_left_block.empty();
-  right_node_table.empty();
+  current_right_block.empty();
 
   dynamic_cast<PGetNextNode*>(left)->Rewind();
   dynamic_cast<PGetNextNode*>(right)->Rewind();
