@@ -16,10 +16,8 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
+#pragma once
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
-#include <string.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -118,5 +116,3 @@ protected:
 private:
     size_t record_position;
 };
-
-#endif // INTERFACE_H

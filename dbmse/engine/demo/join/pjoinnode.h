@@ -16,9 +16,7 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
-
-#ifndef PJOINNODE_H
-#define PJOINNODE_H
+#pragma once
 
 #include <vector>
 #include "../../interface/interface.h"
@@ -49,5 +47,3 @@ private:
     size_t right_join_offset;
     size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
 };
-
-#endif // PJOINNODE_H

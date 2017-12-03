@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <string.h>
 #include <vector>
 #include <string>
 #include <iostream>

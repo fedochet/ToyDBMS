@@ -17,8 +17,7 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PSELECTNODE_H
-#define PSELECTNODE_H
+#pragma once
 
 #include <vector>
 #include "../../interface/interface.h"
@@ -43,5 +42,3 @@ private:
 
     std::vector<Value> ParseRow(const std::string &line) const;
 };
-
-#endif // PSELECTNODE_H

@@ -17,8 +17,8 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PGETNEXTNODE_H
-#define PGETNEXTNODE_H
+#pragma once
+
 #include <vector>
 #include "../interface/interface.h"
 
@@ -48,5 +48,3 @@ class PGetNextNode : public PResultNode {
 protected:
     size_t current_position{0};
 };
-
-#endif // PGETNEXTNODE_H

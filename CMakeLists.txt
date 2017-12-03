@@ -22,6 +22,7 @@ set(SOURCE_FILES
         dbmse/engine/interface/interface.h
         dbmse/engine/interface/lprojectnode.cpp
         dbmse/engine/utils/bd_utils.h
+        dbmse/engine/utils/utils.h
         dbmse/engine/demo/query_api/query_api.h
 
         )
