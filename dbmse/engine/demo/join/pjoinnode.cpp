@@ -64,37 +64,34 @@ query_result PJoinNode::GetNextBlock() {
 
   ValueType vt = lp->fieldTypes[left_join_offset];
 
-  if (right_node_table.empty()) {
-    LoadRightBlock();
+  if (current_right_block.empty()) {
+    UpdateRightBlock();
   }
 
   if (current_left_block.empty()) {
     UpdateLeftBlock();
   }
 
-  size_t &left_pos = current_left_pos;
-  size_t &right_pos = current_right_pos;
-  auto update_block = [&] { UpdateLeftBlock(); };
-
   query_result result_block;
   while (result_block.size() < BLOCK_SIZE
-         && !right_node_table.empty()
+         && !current_right_block.empty()
          && !current_left_block.empty()) {
 
-    if (right_pos >= right_node_table.size()) {
-      right_pos = 0;
-      left_pos++;
+    if (current_right_pos >= current_right_block.size()) {
+      if (UpdateRightBlock()) {
+        current_left_pos++;
+      }
     }
 
-    if (left_pos >= current_left_block.size()) {
-      update_block();
+    if (current_left_pos >= current_left_block.size()) {
+      UpdateLeftBlock();
       continue;
     }
 
-    for (; right_pos < right_node_table.size(); right_pos++) {
+    for (; current_right_pos < current_right_block.size(); current_right_pos++) {
 
-      auto &left_row = current_left_block[left_pos];
-      auto &right_row = right_node_table[right_pos];
+      auto &left_row = current_left_block[current_left_pos];
+      auto &right_row = current_right_block[current_right_pos];
 
       if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
         continue;
@@ -116,7 +113,7 @@ query_result PJoinNode::GetNextBlock() {
       tmp.push_back(left_row[left_join_offset]);
       result_block.push_back(tmp);
       if (result_block.size() >= BLOCK_SIZE) {
-        right_pos++;
+        current_right_pos++;
         break;
       }
     }
@@ -130,15 +127,24 @@ void PJoinNode::Rewind() {
   current_right_pos = 0;
 
   current_left_block.empty();
-  right_node_table.empty();
+  current_right_block.empty();
 
   dynamic_cast<PGetNextNode*>(left)->Rewind();
   dynamic_cast<PGetNextNode*>(right)->Rewind();
 }
 
-void PJoinNode::LoadRightBlock() {
-  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
+bool PJoinNode::UpdateRightBlock() {
+  auto right_node = dynamic_cast<PGetNextNode*>(right);
+  current_right_block = right_node->GetNextBlock();
   current_right_pos = 0;
+
+  if (current_right_block.empty()) {
+    right_node -> Rewind();
+    current_right_block = right_node->GetNextBlock();
+    return true;
+  }
+
+  return false;
 }
 
 void PJoinNode::UpdateLeftBlock() {

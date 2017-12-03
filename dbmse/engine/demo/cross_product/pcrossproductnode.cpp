@@ -54,11 +54,6 @@ size_t PCrossProductNode::GetAttrNum() {
   return left->GetAttrNum() + right->GetAttrNum();
 }
 
-//void PCrossProductNode::LoadRightBlock() {
-//  right_node_table = dynamic_cast<PGetNextNode*>(right)->GetAllData();
-//  current_right_table_pos = 0;
-//}
-
 void PCrossProductNode::UpdateLeftBlock() {
   current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNextBlock();
   current_left_pos = 0;
