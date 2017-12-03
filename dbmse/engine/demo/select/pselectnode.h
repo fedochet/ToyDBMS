@@ -33,10 +33,15 @@ class PSelectNode : public PGetNextNode{
     void Initialize() override;
     // print node
     virtual void Print(size_t indent) override;
-  private:
+
+    query_result GetNextBlock() override;
+
+private:
     BaseTable table;
     std::vector<Predicate> predicates;
     size_t pos;
+
+    std::vector<Value> ParseRow(const std::string &line) const;
 };
 
 #endif // PSELECTNODE_H

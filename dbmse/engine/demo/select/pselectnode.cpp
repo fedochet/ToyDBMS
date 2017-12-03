@@ -31,8 +31,6 @@ using namespace std;
 PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
-  data.clear();
-  Initialize();
 }
 
 template<typename T>
@@ -87,43 +85,10 @@ matches_predicates(const BaseTable &table, const vector<Value> &record, const ve
   return true;
 }
 
-void PSelectNode::Initialize() {
-  string line;
-  ifstream table_file(table.relpath);
-  if (table_file) {
-    // skipping first 4 lines
-    utils::skip_lines(table_file, 4);
-    while (getline(table_file, line)) {
-      vector<Value> tmp;
-      string word;
-      istringstream iss(line, istringstream::in);
-      int field_index = 0;
-      while (iss >> word) {
-        // Yeah, no predicates :) -- Homework
-        Value h;
-        if (prototype->fieldTypes[field_index] == VT_INT) {
-          h = Value(stoi(word));
-        } else {
-          h = Value(word);
-        }
-        tmp.push_back(h);
-        field_index++;
-      }
-
-      if (matches_predicates(this->table, tmp, predicates)) {
-        data.push_back(tmp);
-      }
-    }
-
-    table_file.close();
-  } else {
-    cout << "Unable to open file";
-  }
-}
-
+void PSelectNode::Initialize() {}
 
 void PSelectNode::Print(size_t indent) {
-  for (int i = 0; i < indent; i++) {
+  for (size_t i = 0; i < indent; i++) {
     cout << " ";
   }
 
@@ -137,5 +102,52 @@ void PSelectNode::Print(size_t indent) {
 
   if (left) left->Print(indent + 2);
   if (right) right->Print(indent + 2);
+}
+
+
+query_result PSelectNode::GetNextBlock() {
+  query_result block;
+
+  ifstream table_file(table.relpath);
+  if (table_file) {
+    // skipping first 4 lines
+    utils::skip_lines(table_file, 4);
+    utils::skip_lines(table_file, current_position);
+
+    string line;
+    while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
+      current_position++;
+      vector<Value> row = ParseRow(line);
+      if (matches_predicates(this->table, row, predicates)) {
+        block.push_back(row);
+      }
+    }
+
+    table_file.close();
+  } else {
+    cout << "Unable to open file";
+  }
+
+  return block;
+
+}
+
+vector<Value> PSelectNode::ParseRow(const string &line) const {
+  vector<Value> tmp;
+  string word;
+  istringstream iss(line, ios_base::in);
+  int field_index = 0;
+  while (iss >> word) {
+    // Yeah, no predicates :) -- Homework
+    Value h;
+    if (prototype->fieldTypes[field_index] == VT_INT) {
+      h = Value(stoi(word));
+    } else {
+      h = Value(word);
+    }
+    tmp.push_back(h);
+    field_index++;
+  }
+  return tmp;
 }
 
