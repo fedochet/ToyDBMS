@@ -27,14 +27,16 @@ static const size_t BLOCK_SIZE = 2;
 typedef std::vector<Value> query_result_row;
 typedef std::vector<query_result_row> query_result;
 
-class PGetNextNode : public PResultNode{
+class PGetNextNode : public PResultNode {
   public:
     explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
     __attribute_deprecated__
+
     virtual query_result GetAllData();
     virtual query_result GetNextBlock();
-//    virtual void Rewind();
+    virtual void Rewind();
+
     // getting access to data
     virtual void Initialize();
     // get number of attributes
@@ -43,6 +45,8 @@ class PGetNextNode : public PResultNode{
     // TODO reimplement it
     virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
 
+protected:
+    size_t current_position{0};
 };
 
 #endif // PGETNEXTNODE_H

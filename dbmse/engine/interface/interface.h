@@ -96,8 +96,9 @@ class LUniqueNode : public LAbstractNode{
 
 // Physical node interface (result), should be used for automatic testing
 
-class PResultNode{
-  public:
+class PResultNode {
+
+public:
     PResultNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
     virtual ~PResultNode();
     // returns number of attributes
@@ -108,10 +109,13 @@ class PResultNode{
     LAbstractNode* prototype;
     // returns error status and data, if possible
     virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
-  protected:
+
+protected:
     PResultNode* left;
     PResultNode* right;
     std::vector<std::vector<Value>> data;
+
+private:
     size_t pos;
 };
 

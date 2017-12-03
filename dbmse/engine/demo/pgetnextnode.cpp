@@ -48,15 +48,18 @@ size_t PGetNextNode::GetAttrNum() {
 }
 
 query_result PGetNextNode::GetNextBlock() {
-  if (pos > data.size()) {
+  if (current_position > data.size()) {
     return query_result();
   }
 
-  auto block_start = data.begin() + pos;
+  auto block_start = data.begin() + current_position;
   auto block_end = min(block_start + BLOCK_SIZE, data.end());
-  pos += block_end - block_start;
+  current_position += block_end - block_start;
 
   return query_result(block_start, block_end);
+}
+
+void PGetNextNode::Rewind() {
 }
 
 std::tuple<ErrCode, std::vector<Value>> PGetNextNode::GetRecord() {

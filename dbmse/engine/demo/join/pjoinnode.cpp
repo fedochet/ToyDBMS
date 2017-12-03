@@ -30,7 +30,6 @@ typedef vector<string> name_aliases;
 
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
                      LAbstractNode* p) : PGetNextNode(p, left, right) {
-  pos = 0;
   Initialize();
 }
 
