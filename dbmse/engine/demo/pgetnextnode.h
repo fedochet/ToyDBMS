@@ -31,8 +31,10 @@ class PGetNextNode : public PResultNode{
   public:
     explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
+    __attribute_deprecated__
     virtual query_result GetAllData();
     virtual query_result GetNextBlock();
+//    virtual void Rewind();
     // getting access to data
     virtual void Initialize();
     // get number of attributes
