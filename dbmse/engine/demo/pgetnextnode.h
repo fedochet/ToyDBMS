@@ -24,9 +24,6 @@
 
 static const size_t BLOCK_SIZE = 4;
 
-typedef std::vector<Value> query_result_row;
-typedef std::vector<query_result_row> query_result;
-
 class PGetNextNode : public PResultNode {
   public:
     explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);

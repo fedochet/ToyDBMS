@@ -9,7 +9,7 @@ public:
 
     void Print(size_t indent) override;
 
-    std::vector<std::vector<Value>> GetNextBlock() override;
+    query_result GetNextBlock() override;
     void Rewind() override;
 
     size_t GetAttrNum() override;

@@ -62,7 +62,7 @@ bool apply_string_predicate(const Value &compared_attribute, const Predicate &pr
 }
 
 bool
-matches_predicates(const BaseTable &table, const vector<Value> &record, const vector<Predicate> &predicates) {
+matches_predicates(const BaseTable &table, const query_result_row &record, const vector<Predicate> &predicates) {
   for (auto &predicate: predicates) {
     if (table.vtypes[predicate.attribute] == predicate.vtype) {
       auto &compared_attribute = record[predicate.attribute];
@@ -116,7 +116,7 @@ query_result PSelectNode::GetNextBlock() {
     string line;
     while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
       current_position++;
-      vector<Value> row = ParseRow(line);
+      auto row = ParseRow(line);
       if (matches_predicates(this->table, row, predicates)) {
         block.push_back(row);
       }
@@ -131,8 +131,8 @@ query_result PSelectNode::GetNextBlock() {
 
 }
 
-vector<Value> PSelectNode::ParseRow(const string &line) const {
-  vector<Value> tmp;
+query_result_row PSelectNode::ParseRow(const string &line) const {
+  query_result_row tmp;
   string word;
   istringstream iss(line, ios_base::in);
   int field_index = 0;

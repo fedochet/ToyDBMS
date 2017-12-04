@@ -63,12 +63,12 @@ public:
     // used to get attribute info
     LAbstractNode* prototype;
     // returns error status and data, if possible
-    virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
+    virtual std::tuple<ErrCode, query_result_row> GetRecord();
 
 protected:
     PResultNode* left;
     PResultNode* right;
-    std::vector<std::vector<Value>> data;
+    query_result data;
 
 private:
     size_t record_position;

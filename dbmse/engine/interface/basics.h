@@ -75,6 +75,9 @@ struct Value{
 
 };
 
+typedef std::vector<Value> query_result_row;
+typedef std::vector<query_result_row> query_result;
+
 enum PredicateType{
   PT_EQUALS,
   PT_GREATERTHAN,
