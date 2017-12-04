@@ -1,0 +1,7 @@
+3
+id name weight
+INT STRING INT
+ASCENDING UNKNOWN UNKNOWN
+0   Lil_Pip_In_Chokolate 20
+1   Back_to_Mexiko       400
+2   Master_of_Puppets    150
