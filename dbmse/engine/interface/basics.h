@@ -56,22 +56,50 @@ struct Value {
     vstr = v;
     vint = 0;
   }
+
   Value(){
     vtype = VT_INT;
     vint = 0;
     vstr = "";
   }
+
   explicit operator int() const {return vint;}
   explicit operator std::string() const {return vstr;}
   ~Value() = default;
 
   bool operator==(const Value& right) const {
-    return vtype == right.vtype && vint == right.vint && vstr == right.vstr;
+    if (vtype != right.vtype) {
+      throw std::runtime_error("Cannot compare Values of different types!");
+    }
+
+    switch (vtype) {
+      case VT_INT:
+        return vint == right.vint;
+      case VT_STRING:
+        return vstr == right.vstr;
+    }
+
+    throw std::runtime_error("Cannot get here!");
   }
 
   bool operator!=(const Value& right) const {
-    return !(vtype == right.vtype && vint == right.vint && vstr == right.vstr);
+    return !(*this == right);
   }
+
+    bool operator<(const Value& right) const {
+      if (vtype != right.vtype) {
+        throw std::runtime_error("Cannot compare Values of different types!");
+      }
+
+      switch (vtype) {
+        case VT_INT:
+          return vint < right.vint;
+        case VT_STRING:
+          return vstr < right.vstr;
+      }
+
+      throw std::runtime_error("Cannot get here!");
+    }
 
 };
 
