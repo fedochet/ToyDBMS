@@ -78,6 +78,8 @@ struct Value{
 typedef std::vector<Value> query_result_row;
 typedef std::vector<query_result_row> query_result;
 
+typedef std::vector<std::string> name_aliases;
+
 enum PredicateType{
   PT_EQUALS,
   PT_GREATERTHAN,

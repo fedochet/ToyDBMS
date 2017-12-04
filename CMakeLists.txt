@@ -24,7 +24,15 @@ set(SOURCE_FILES
         dbmse/engine/utils/utils.h
         dbmse/engine/demo/query_api/query_api.h
         dbmse/engine/interface/projection/lprojectnode.h
-        dbmse/engine/interface/projection/lprojectnode.cpp dbmse/engine/interface/select/lselectnode.cpp dbmse/engine/interface/select/lselectnode.h dbmse/engine/interface/joins/ljoinnode.cpp dbmse/engine/interface/joins/ljoinnode.h dbmse/engine/interface/crossproduct/lcrossproductnode.cpp dbmse/engine/interface/crossproduct/lcrossproductnode.h)
+        dbmse/engine/interface/projection/lprojectnode.cpp
+        dbmse/engine/interface/select/lselectnode.cpp
+        dbmse/engine/interface/select/lselectnode.h
+        dbmse/engine/interface/joins/ljoinnode.cpp
+        dbmse/engine/interface/joins/ljoinnode.h
+        dbmse/engine/interface/crossproduct/lcrossproductnode.cpp
+        dbmse/engine/interface/crossproduct/lcrossproductnode.h
+        dbmse/engine/interface/joins/lsortmergejoin.cpp
+        dbmse/engine/interface/joins/lsortmergejoin.h)
 
 add_library(ToyDB ${SOURCE_FILES})
 

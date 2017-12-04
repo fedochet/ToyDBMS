@@ -26,8 +26,6 @@
 
 using namespace std;
 
-typedef vector<string> name_aliases;
-
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
                      LAbstractNode* p) : PGetNextNode(p, left, right) {
 
