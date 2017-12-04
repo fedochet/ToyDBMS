@@ -63,7 +63,8 @@ LSortMergeJoinNode::~LSortMergeJoinNode() {
 }
 
 void LSortMergeJoinNode::AssertColumnsSortedSame(size_t i, size_t j) {
-  bool left_field_sorted = GetLeft()->fieldOrders[i] == CS_DESCENDING || GetRight()->fieldOrders[i] == CS_ASCENDING;
+//  bool left_field_sorted = GetLeft()->fieldOrders[i] == CS_DESCENDING || GetRight()->fieldOrders[i] == CS_ASCENDING;
+  bool left_field_sorted = GetRight()->fieldOrders[i] == CS_ASCENDING;
   if (!left_field_sorted || GetRight()->fieldOrders[i] != GetLeft()->fieldOrders[j]) {
     throw runtime_error("You cannot use sort-merge join to join not sorted fiedls!");
   }

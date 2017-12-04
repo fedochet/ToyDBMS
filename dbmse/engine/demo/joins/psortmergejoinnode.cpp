@@ -41,28 +41,18 @@ query_result PSortMergeJoinNode::GetNextBlock() {
   vector<name_aliases> ln = lp->fieldNames;
   vector<name_aliases> rn = rp->fieldNames;
 
-  ValueType vt = lp->fieldTypes[left_join_offset];
-
   query_result result_block;
-  while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed()) {
 
-    if (right_iterator.Closed()) {
-      right_iterator.Rewind();
+  while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed() && !right_iterator.Closed()) {
+    auto &left_row = *left_iterator;
+    auto &right_row = *right_iterator;
+
+    if (left_row[left_join_offset] < right_row[right_join_offset]) {
       ++left_iterator;
+      continue;
     }
 
-    if (left_iterator.Closed()) {
-      break;
-    }
-
-    while (!right_iterator.Closed()) {
-      auto &left_row = *left_iterator;
-      auto &right_row = *right_iterator;
-
-      if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
-        ++right_iterator;
-        continue;
-      }
+    if (left_row[left_join_offset] == right_row[right_join_offset]) {
 
       query_result_row tmp;
       for (size_t k = 0; k < ln.size(); k++) {
@@ -79,10 +69,14 @@ query_result PSortMergeJoinNode::GetNextBlock() {
 
       tmp.push_back(left_row[left_join_offset]);
       result_block.push_back(tmp);
+
       ++right_iterator;
-      if (result_block.size() >= BLOCK_SIZE) {
-        break;
-      }
+      continue;
+    }
+
+    if (right_row[right_join_offset] < left_row[left_join_offset]) {
+      ++right_iterator;
+      continue;
     }
   }
 
