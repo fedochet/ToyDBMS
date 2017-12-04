@@ -1,44 +1,34 @@
 #include "pcrossproductnode.h"
-#include "../../utils/utils.h"
-#include "../../utils/bd_utils.h"
 
 using namespace std;
 
 PCrossProductNode::PCrossProductNode(PGetNextNode* left, PGetNextNode* right, LCrossProductNode* source)
     : PGetNextNode(source, left, right)
-    , left_iterator(left) {
+    , left_iterator(left)
+    , right_iterator(right) {
 }
 
 query_result PCrossProductNode::GetNextBlock() {
 
-  if (current_right_block.empty()) {
-    UpdateRightBlock();
-  }
-
   query_result result_block;
 
-  while (result_block.size() < BLOCK_SIZE
-         && !current_right_block.empty()
-         && !left_iterator.Closed()) {
+  while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed()) {
 
-    if (current_right_pos >= current_right_block.size()) {
-      UpdateRightBlock();
+    if (right_iterator.Closed()) {
+      right_iterator.Rewind();
+      ++left_iterator;
     }
 
     if (left_iterator.Closed()) {
-      continue;
+      break;
     }
 
-    for (; current_right_pos < current_right_block.size(); current_right_pos++) {
-      auto &right_row = current_right_block[current_right_pos];
+    while (!right_iterator.Closed()) {
+      auto &right_row = *right_iterator;
       auto tmp_result = *left_iterator;
       utils::append_to_back(tmp_result, right_row);
       result_block.push_back(tmp_result);
-
-      if (result_block.size() >= BLOCK_SIZE) {
-        current_right_pos++;
-        break;
-      }
+      ++right_iterator;
     }
   }
 
@@ -47,18 +37,6 @@ query_result PCrossProductNode::GetNextBlock() {
 
 size_t PCrossProductNode::GetAttrNum() {
   return left->GetAttrNum() + right->GetAttrNum();
-}
-
-void PCrossProductNode::UpdateRightBlock() {
-  auto right_node = dynamic_cast<PGetNextNode*>(right);
-  current_right_block = right_node->GetNextBlock();
-  current_right_pos = 0;
-
-  if (current_right_block.empty()) {
-    right_node->Rewind();
-    current_right_block = right_node->GetNextBlock();
-    ++left_iterator;
-  }
 }
 
 void PCrossProductNode::Print(size_t indent) {
@@ -72,11 +50,8 @@ void PCrossProductNode::Print(size_t indent) {
 }
 
 void PCrossProductNode::Rewind() {
-  current_right_pos = 0;
-
   left_iterator.Rewind();
-  dynamic_cast<PGetNextNode*>(left)->Rewind();
-  dynamic_cast<PGetNextNode*>(right)->Rewind();
+  right_iterator.Rewind();
 }
 
 PCrossProductNode::~PCrossProductNode() {

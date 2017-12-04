@@ -15,10 +15,6 @@ public:
     ~PCrossProductNode() override;
 
 private:
-    query_result current_right_block;
-    size_t current_right_pos;
-
     utils::BlockIterator left_iterator;
-
-    void UpdateRightBlock();
+    utils::BlockIterator right_iterator;
 };
