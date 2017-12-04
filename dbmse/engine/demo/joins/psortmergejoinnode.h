@@ -2,9 +2,10 @@
 
 #include "../pgetnextnode.h"
 #include "../../utils/bd_utils.h"
+#include "../../interface/joins/lsortmergejoin.h"
 
 struct PSortMergeJoinNode : PGetNextNode {
-    PSortMergeJoinNode(LAbstractNode* p, PGetNextNode* left, PGetNextNode* right);
+    PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right);
     ~PSortMergeJoinNode() override;
 
     void Print(size_t indent) override;

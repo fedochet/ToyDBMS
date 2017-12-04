@@ -24,8 +24,7 @@
 
 using namespace std;
 
-PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
-                     LAbstractNode* p)
+PJoinNode::PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right)
     : PGetNextNode(p, left, right)
     , left_iterator(left)
     , right_iterator(right) {

@@ -22,10 +22,11 @@
 #include "../../interface/interface.h"
 #include "../pgetnextnode.h"
 #include "../../utils/bd_utils.h"
+#include "../../interface/joins/ljoinnode.h"
 
 class PJoinNode : public PGetNextNode{
   public:
-    PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
+    PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right);
     ~PJoinNode();
 
     void Print(size_t indent) override;

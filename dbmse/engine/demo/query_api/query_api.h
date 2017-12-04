@@ -7,6 +7,8 @@
 #include "../select/pselectnode.h"
 #include "../../interface/select/lselectnode.h"
 #include "../../interface/joins/ljoinnode.h"
+#include "../../interface/joins/lsortmergejoin.h"
+#include "../joins/psortmergejoinnode.h"
 
 // Here be rewriter and optimizer
 PResultNode* QueryFactory(LAbstractNode* node){
@@ -17,10 +19,18 @@ PResultNode* QueryFactory(LAbstractNode* node){
 
   if (auto* joinNode = dynamic_cast<LJoinNode*>(node)) {
     auto* leftPNode = dynamic_cast<PGetNextNode*>(QueryFactory(joinNode->GetLeft()));
-    auto* leftRNode = dynamic_cast<PGetNextNode*>(QueryFactory(joinNode->GetRight()));
+    auto* rightPNode = dynamic_cast<PGetNextNode*>(QueryFactory(joinNode->GetRight()));
 
-    return new PJoinNode(leftPNode, leftRNode, node);
+    return new PJoinNode(joinNode, leftPNode, rightPNode);
   }
+
+  if (auto* sortJoinNode = dynamic_cast<LSortMergeJoinNode*>(node)) {
+    auto* leftPNode = dynamic_cast<PGetNextNode*>(QueryFactory(sortJoinNode->GetLeft()));
+    auto* rightPNode = dynamic_cast<PGetNextNode*>(QueryFactory(sortJoinNode->GetRight()));
+
+    return new PSortMergeJoinNode(sortJoinNode, leftPNode, rightPNode);
+  }
+
 
   if (auto* l_cross_product_node = dynamic_cast<LCrossProductNode*>(node)) {
     auto* rres = dynamic_cast<PGetNextNode*>(QueryFactory(node->GetRight()));
@@ -34,7 +44,7 @@ PResultNode* QueryFactory(LAbstractNode* node){
     return new PProjectNode(next, l_project_node);
   }
 
-  return nullptr;
+  throw std::runtime_error("Unknow node type!");
 
 }
 

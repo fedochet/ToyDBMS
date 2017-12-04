@@ -3,7 +3,7 @@
 
 using namespace std;
 
-PSortMergeJoinNode::PSortMergeJoinNode(LAbstractNode* p, PGetNextNode* left, PGetNextNode* right)
+PSortMergeJoinNode::PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right)
     : PGetNextNode(p, left, right)
     , left_iterator(left)
     , right_iterator(right) {
