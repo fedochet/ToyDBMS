@@ -32,7 +32,7 @@ set(SOURCE_FILES
         dbmse/engine/interface/crossproduct/lcrossproductnode.cpp
         dbmse/engine/interface/crossproduct/lcrossproductnode.h
         dbmse/engine/interface/joins/lsortmergejoin.cpp
-        dbmse/engine/interface/joins/lsortmergejoin.h)
+        dbmse/engine/interface/joins/lsortmergejoin.h dbmse/engine/utils/bd_utils.cpp)
 
 add_library(ToyDB ${SOURCE_FILES})
 
