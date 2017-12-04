@@ -9,8 +9,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Werror")
 set(SOURCE_FILES
         dbmse/engine/demo/pgetnextnode.cpp
         dbmse/engine/demo/pgetnextnode.h
-        dbmse/engine/demo/join/pjoinnode.cpp
-        dbmse/engine/demo/join/pjoinnode.h
+        dbmse/engine/demo/joins/pjoinnode.cpp
+        dbmse/engine/demo/joins/pjoinnode.h
         dbmse/engine/demo/select/pselectnode.cpp
         dbmse/engine/demo/select/pselectnode.h
         dbmse/engine/demo/cross_product/pcrossproductnode.cpp

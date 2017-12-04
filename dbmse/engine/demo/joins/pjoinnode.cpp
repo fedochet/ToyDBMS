@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -157,7 +157,7 @@ size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
   }
 
   throw runtime_error(
-      string("Cannot join by column named ") + offset_name_1 + " or " + offset_name_2
+      string("Cannot joins by column named ") + offset_name_1 + " or " + offset_name_2
   );
 }
 

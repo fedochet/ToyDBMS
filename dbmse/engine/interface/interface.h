@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -54,7 +54,7 @@ class LJoinNode : public LAbstractNode{
     // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
     LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2, int memorylimit = 0);
     ~LJoinNode();
-    // attributes to perform equi-join on
+    // attributes to perform equi-joins on
     std::string offset1, offset2;
     // maximum number of records permitted to present inside physical node
     int memorylimit;

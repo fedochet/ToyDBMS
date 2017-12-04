@@ -3,7 +3,7 @@
 #include <tuple>
 #include "../projection/pprojectnode.h"
 #include "../cross_product/pcrossproductnode.h"
-#include "../join/pjoinnode.h"
+#include "../joins/pjoinnode.h"
 #include "../select/pselectnode.h"
 
 // Here be rewriter and optimizer

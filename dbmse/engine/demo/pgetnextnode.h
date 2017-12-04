@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:

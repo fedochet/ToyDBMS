@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -40,7 +40,7 @@ int main(){
   }
   
   {
-    std::cout << std::endl << "Query2: nested loop join" << std::endl;
+    std::cout << std::endl << "Query2: nested loop joins" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
     LJoinNode* join_node = new LJoinNode(
@@ -59,7 +59,7 @@ int main(){
   }
 
   {
-    std::cout << std::endl << "Query2: simple equi-join" << std::endl;
+    std::cout << std::endl << "Query2: simple equi-joins" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
     std::cout << bt1;
