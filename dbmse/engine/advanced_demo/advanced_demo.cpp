@@ -88,7 +88,7 @@ int main() {
   }
 
   {
-    cout << "Simple sort merge join test (on the same table)" << endl;
+    cout << "Simple sort merge join test" << endl;
 
     BaseTable bt1 = BaseTable("USER");
     BaseTable bt2 = BaseTable("PRODUCT");
@@ -106,6 +106,27 @@ int main() {
 
     cout << endl;
   }
+
+  {
+    cout << "More advanced merge join test" << endl;
+
+    BaseTable bt1 = BaseTable("CITY");
+    BaseTable bt2 = BaseTable("SIGHT");
+
+    auto city_select = new LSelectNode(bt1, {});
+    auto sight_select = new LSelectNode(bt2, {});
+    auto sorted_join = new LSortMergeJoinNode(city_select, sight_select, "CITY.name", "SIGHT.city_name");
+    auto p_node = QueryFactory(sorted_join);
+
+    p_node->Print(0);
+    ExecuteQuery(p_node);
+
+    delete sorted_join;
+    delete p_node;
+
+    cout << endl;
+  }
+
 
   return 0;
 }

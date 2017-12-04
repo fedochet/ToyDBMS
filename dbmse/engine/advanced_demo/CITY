@@ -1,0 +1,10 @@
+2
+id name
+INT STRING
+UNKNOWN ASCENDING
+0 london
+1 moscow
+2 new-york
+3 rybinsk
+4 spb
+5 volgograd
