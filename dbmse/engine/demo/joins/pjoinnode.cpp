@@ -22,6 +22,7 @@
 #include "pjoinnode.h"
 #include "../../utils/utils.h"
 #include "../../utils/bd_utils.h"
+#include "../../interface/joins/ljoinnode.h"
 
 using namespace std;
 

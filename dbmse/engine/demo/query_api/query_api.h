@@ -5,6 +5,8 @@
 #include "../cross_product/pcrossproductnode.h"
 #include "../joins/pjoinnode.h"
 #include "../select/pselectnode.h"
+#include "../../interface/select/lselectnode.h"
+#include "../../interface/joins/ljoinnode.h"
 
 // Here be rewriter and optimizer
 PResultNode* QueryFactory(LAbstractNode* node){

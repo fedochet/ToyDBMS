@@ -40,7 +40,7 @@ int main(){
   }
   
   {
-    std::cout << std::endl << "Query2: nested loop joins" << std::endl;
+    std::cout << std::endl << "Query2: nested loop join" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
     LJoinNode* join_node = new LJoinNode(
@@ -59,7 +59,7 @@ int main(){
   }
 
   {
-    std::cout << std::endl << "Query2: simple equi-joins" << std::endl;
+    std::cout << std::endl << "Query2: simple equi-join" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
     std::cout << bt1;

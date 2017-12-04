@@ -43,49 +43,6 @@ class LAbstractNode{
     LAbstractNode* rigth;
 };
 
-class LCrossProductNode : public LAbstractNode{
-  public:
-    LCrossProductNode(LAbstractNode* left, LAbstractNode* right);
-    ~LCrossProductNode() override;
-};
-
-class LJoinNode : public LAbstractNode{
-  public:
-    // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2, int memorylimit = 0);
-    ~LJoinNode();
-    // attributes to perform equi-joins on
-    std::string offset1, offset2;
-    // maximum number of records permitted to present inside physical node
-    int memorylimit;
-};
-
-class LProjectNode : public LAbstractNode{
-  public:
-    // offsets to keep
-    LProjectNode(LAbstractNode* child, std::vector<std::string> tokeep);
-    ~LProjectNode();
-
-    // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    std::vector<size_t> offsets;
-};
-
-class LSelectNode : public LAbstractNode{
-  public:
-    LSelectNode(BaseTable& table, std::vector<Predicate> predicates);
-    // returns a reference to BaseTable
-    BaseTable& GetBaseTable();
-    // returns end status and next predicate (if exists)
-    std::tuple<int, Predicate> GetNextPredicate();
-    // resets predicate iterator
-    void ResetIterator();
-    ~LSelectNode();
-    std::vector<Predicate> predicates;
-private:
-    size_t iteratorpos;
-    BaseTable table;
-};
-
 class LUniqueNode : public LAbstractNode{
   public:
     LUniqueNode(LAbstractNode* child);

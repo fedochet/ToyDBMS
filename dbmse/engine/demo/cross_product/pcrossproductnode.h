@@ -1,5 +1,6 @@
 #pragma once
 #include "../pgetnextnode.h"
+#include "../../interface/crossproduct/lcrossproductnode.h"
 
 class PCrossProductNode : public PGetNextNode {
 public:

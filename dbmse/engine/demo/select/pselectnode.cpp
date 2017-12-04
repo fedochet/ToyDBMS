@@ -25,6 +25,7 @@
 
 #include "pselectnode.h"
 #include "../../utils/utils.h"
+#include "../../interface/select/lselectnode.h"
 
 using namespace std;
 
