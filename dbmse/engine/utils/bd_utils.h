@@ -7,7 +7,7 @@
 namespace utils {
     struct BlockIterator {
         BlockIterator(PGetNextNode* node);
-        const query_result_row* operator* () const;
+        const query_result_row& operator* () const;
         const query_result_row&operator->() const;
         BlockIterator& operator++();
         void Rewind();

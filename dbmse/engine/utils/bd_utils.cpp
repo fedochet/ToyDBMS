@@ -8,16 +8,16 @@ BlockIterator::BlockIterator(PGetNextNode* node)
     , current_block(node->GetNextBlock()) {
 }
 
-const query_result_row* utils::BlockIterator::operator* () const {
+const query_result_row& utils::BlockIterator::operator* () const {
   if (Closed()) {
     throw std::runtime_error("No more data in table, Iterator is closed!");
   }
 
-  return &current_block[current_pos];
+  return current_block[current_pos];
 }
 
 const query_result_row &utils::BlockIterator::operator->() const {
-  return *(this->operator*());
+  return **this;
 }
 
 BlockIterator &utils::BlockIterator::operator++() {

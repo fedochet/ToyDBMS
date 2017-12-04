@@ -1,6 +1,7 @@
 #pragma once
 #include "../pgetnextnode.h"
 #include "../../interface/crossproduct/lcrossproductnode.h"
+#include "../../utils/bd_utils.h"
 
 class PCrossProductNode : public PGetNextNode {
 public:
@@ -14,11 +15,10 @@ public:
     ~PCrossProductNode() override;
 
 private:
-    query_result current_left_block;
     query_result current_right_block;
-    size_t current_left_pos;
     size_t current_right_pos;
 
-    void UpdateLeftBlock();
+    utils::BlockIterator left_iterator;
+
     void UpdateRightBlock();
 };
