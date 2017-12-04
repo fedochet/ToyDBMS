@@ -29,6 +29,9 @@ query_result PCrossProductNode::GetNextBlock() {
       utils::append_to_back(tmp_result, right_row);
       result_block.push_back(tmp_result);
       ++right_iterator;
+      if (result_block.size() >= BLOCK_SIZE) {
+        break;
+      }
     }
   }
 

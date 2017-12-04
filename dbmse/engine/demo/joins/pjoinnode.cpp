@@ -20,14 +20,15 @@
 #include<algorithm>
 
 #include "pjoinnode.h"
-#include "../../utils/utils.h"
-#include "../../utils/bd_utils.h"
 #include "../../interface/joins/ljoinnode.h"
 
 using namespace std;
 
 PJoinNode::PJoinNode(PGetNextNode* left, PGetNextNode* right,
-                     LAbstractNode* p) : PGetNextNode(p, left, right) {
+                     LAbstractNode* p)
+    : PGetNextNode(p, left, right)
+    , left_iterator(left)
+    , right_iterator(right) {
 
   vector<name_aliases> ln = left->prototype->fieldNames;
   vector<name_aliases> rn = right->prototype->fieldNames;
@@ -54,34 +55,24 @@ query_result PJoinNode::GetNextBlock() {
 
   ValueType vt = lp->fieldTypes[left_join_offset];
 
-  if (current_right_block.empty()) {
-    UpdateRightBlock();
-  }
-
-  if (current_left_block.empty()) {
-    UpdateLeftBlock();
-  }
-
   query_result result_block;
-  while (result_block.size() < BLOCK_SIZE
-         && !current_right_block.empty()
-         && !current_left_block.empty()) {
+  while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed()) {
 
-    if (current_right_pos >= current_right_block.size()) {
-      UpdateRightBlock();
+    if (right_iterator.Closed()) {
+      right_iterator.Rewind();
+      ++left_iterator;
     }
 
-    if (current_left_pos >= current_left_block.size()) {
-      UpdateLeftBlock();
-      continue;
+    if (left_iterator.Closed()) {
+      break;
     }
 
-    for (; current_right_pos < current_right_block.size(); current_right_pos++) {
-
-      auto &left_row = current_left_block[current_left_pos];
-      auto &right_row = current_right_block[current_right_pos];
+    while (!right_iterator.Closed()) {
+      auto &left_row = *left_iterator;
+      auto &right_row = *right_iterator;
 
       if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
+        ++right_iterator;
         continue;
       }
 
@@ -100,8 +91,8 @@ query_result PJoinNode::GetNextBlock() {
 
       tmp.push_back(left_row[left_join_offset]);
       result_block.push_back(tmp);
+      ++right_iterator;
       if (result_block.size() >= BLOCK_SIZE) {
-        current_right_pos++;
         break;
       }
     }
@@ -111,31 +102,8 @@ query_result PJoinNode::GetNextBlock() {
 }
 
 void PJoinNode::Rewind() {
-  current_left_pos = 0;
-  current_right_pos = 0;
-
-  current_left_block.empty();
-  current_right_block.empty();
-
-  dynamic_cast<PGetNextNode*>(left)->Rewind();
-  dynamic_cast<PGetNextNode*>(right)->Rewind();
-}
-
-void PJoinNode::UpdateRightBlock() {
-  auto right_node = dynamic_cast<PGetNextNode*>(right);
-  current_right_block = right_node->GetNextBlock();
-  current_right_pos = 0;
-
-  if (current_right_block.empty()) {
-    right_node->Rewind();
-    current_right_block = right_node->GetNextBlock();
-    current_left_pos++;
-  }
-}
-
-void PJoinNode::UpdateLeftBlock() {
-  current_left_block = dynamic_cast<PGetNextNode*>(left)->GetNextBlock();
-  current_left_pos = 0;
+  left_iterator.Rewind();
+  right_iterator.Rewind();
 }
 
 size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {

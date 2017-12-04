@@ -21,6 +21,7 @@
 #include <vector>
 #include "../../interface/interface.h"
 #include "../pgetnextnode.h"
+#include "../../utils/bd_utils.h"
 
 class PJoinNode : public PGetNextNode{
   public:
@@ -35,13 +36,8 @@ class PJoinNode : public PGetNextNode{
     size_t GetAttrNum() override;
 
 private:
-    query_result current_right_block;
-    query_result current_left_block;
-    size_t current_left_pos;
-    size_t current_right_pos;
-
-    void UpdateLeftBlock();
-    void UpdateRightBlock();
+    utils::BlockIterator left_iterator;
+    utils::BlockIterator right_iterator;
 
     size_t left_join_offset;
     size_t right_join_offset;

@@ -40,7 +40,7 @@ enum COLUMN_SORT{
     CS_UNKNOWN
 };
 
-struct Value{
+struct Value {
   ValueType vtype;
   int vint;
   std::string vstr;
@@ -61,15 +61,15 @@ struct Value{
     vint = 0;
     vstr = "";
   }
-  operator int() const {return vint;}
-  operator std::string() const {return vstr;}
+  explicit operator int() const {return vint;}
+  explicit operator std::string() const {return vstr;}
   ~Value() = default;
 
-    bool operator==(const Value& right) {
+  bool operator==(const Value& right) const {
     return vtype == right.vtype && vint == right.vint && vstr == right.vstr;
   }
 
-  bool operator!=(const Value& right) {
+  bool operator!=(const Value& right) const {
     return !(vtype == right.vtype && vint == right.vint && vstr == right.vstr);
   }
 

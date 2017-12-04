@@ -17,7 +17,7 @@ const query_result_row& utils::BlockIterator::operator* () const {
 }
 
 const query_result_row &utils::BlockIterator::operator->() const {
-  return **this;
+  return *(*this);
 }
 
 BlockIterator &utils::BlockIterator::operator++() {
@@ -33,6 +33,9 @@ BlockIterator &utils::BlockIterator::operator++() {
 
 void utils::BlockIterator::Rewind() {
   node->Rewind();
+  current_block.clear();
+  current_pos = 0;
+  ++(*this);
 }
 
 bool BlockIterator::Closed() const{

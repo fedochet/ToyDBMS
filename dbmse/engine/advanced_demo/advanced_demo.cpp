@@ -44,6 +44,22 @@ int main() {
   {
     BaseTable bt1 = BaseTable("USER");
     BaseTable bt2 = BaseTable("ORDER");
+    auto user_select = new LSelectNode(bt1, {});
+    auto order_select = new LSelectNode(bt2, {});
+
+    auto user_order_join = new LJoinNode(user_select, order_select, "USER.email", "ORDER.customer_email");
+    auto p_node = QueryFactory(user_order_join);
+
+    p_node->Print(0);
+    ExecuteQuery(p_node);
+
+    delete user_order_join;
+    delete p_node;
+  }
+
+  {
+    BaseTable bt1 = BaseTable("USER");
+    BaseTable bt2 = BaseTable("ORDER");
     BaseTable bt3 = BaseTable("PRODUCT");
     auto user_select = new LSelectNode(bt1, {Predicate(PT_GREATERTHAN, VT_INT, 4, 23, "")});
     auto order_select = new LSelectNode(bt2, {});
