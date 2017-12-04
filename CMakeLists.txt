@@ -3,7 +3,7 @@ project(ToyDBMS)
 
 set(CMAKE_CXX_STANDARD 14)
 #for better times
-set(CMAKE_CXX_FLAGS "-Wall -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
 
 
 set(SOURCE_FILES

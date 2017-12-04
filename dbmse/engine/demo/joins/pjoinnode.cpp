@@ -46,8 +46,8 @@ size_t PJoinNode::GetAttrNum() {
 }
 
 query_result PJoinNode::GetNextBlock() {
-  PGetNextNode* l = (PGetNextNode*) left;
-  PGetNextNode* r = (PGetNextNode*) right;
+  PGetNextNode* l = dynamic_cast<PGetNextNode*>(left);
+  PGetNextNode* r = dynamic_cast<PGetNextNode*>(right);
   LAbstractNode* lp = l->prototype;
   LAbstractNode* rp = r->prototype;
   vector<name_aliases> ln = lp->fieldNames;
@@ -107,8 +107,8 @@ void PJoinNode::Rewind() {
 }
 
 size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
-  auto offset_name_1 = ((LJoinNode*) prototype)->offset1;
-  auto offset_name_2 = ((LJoinNode*) prototype)->offset2;
+  auto offset_name_1 = (dynamic_cast<LJoinNode*>(prototype))->offset1;
+  auto offset_name_2 = (dynamic_cast<LJoinNode*>(prototype))->offset2;
 
   for (size_t i = 0; i < names.size(); i++) {
     size_t lpos1 = utils::find(names[i], offset_name_1);
@@ -128,7 +128,11 @@ void PJoinNode::Print(size_t indent) {
   for (size_t i = 0; i < indent; i++) {
     cout << " ";
   }
-  cout << "NL-JOIN: " << ((LJoinNode*) prototype)->offset1 << "=" << ((LJoinNode*) prototype)->offset2 << endl;
+  cout << "NL-JOIN: "
+       << (dynamic_cast<LJoinNode*>(prototype))->offset1
+       << "="
+       << (dynamic_cast<LJoinNode*>(prototype))->offset2
+       << endl;
   left->Print(indent + 2);
   right->Print(indent + 2);
 }

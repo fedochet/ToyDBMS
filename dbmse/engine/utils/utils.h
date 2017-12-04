@@ -19,7 +19,7 @@ namespace utils {
     template<class T, class U>
     size_t find(T &collection, U &elem) {
       return std::find(std::begin(collection), std::end(collection), elem) - std::begin(collection);
-    };
+    }
 
     inline size_t skip_lines(std::istream &in, size_t n) {
       size_t skipped = 0;
