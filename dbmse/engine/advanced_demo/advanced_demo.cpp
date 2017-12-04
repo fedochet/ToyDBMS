@@ -127,6 +127,27 @@ int main() {
     cout << endl;
   }
 
+  {
+    cout << "Even More advanced merge join test: each with each in one city" << endl;
+
+    BaseTable bt1 = BaseTable("SIGHT");
+    BaseTable bt2 = BaseTable("SIGHT");
+
+    auto sight_select = new LSelectNode(bt1, {});
+    auto sight_select1 = new LSelectNode(bt2, {});
+    auto sorted_join = new LSortMergeJoinNode(sight_select, sight_select1, "SIGHT.city_name", "SIGHT.city_name");
+    auto p_node = QueryFactory(sorted_join);
+
+    p_node->Print(0);
+    ExecuteQuery(p_node);
+
+    delete sorted_join;
+    delete p_node;
+
+    cout << endl;
+  }
+
+
 
   return 0;
 }
