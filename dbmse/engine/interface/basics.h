@@ -54,6 +54,7 @@ struct Value{
   Value(std::string v){
     vtype = VT_STRING;
     vstr = v;
+    vint = 0;
   }
   Value(){
     vtype = VT_INT;
@@ -62,10 +63,9 @@ struct Value{
   }
   operator int() const {return vint;}
   operator std::string() const {return vstr;}
-  ~Value(){
-  }
+  ~Value() = default;
 
-  bool operator==(const Value& right) {
+    bool operator==(const Value& right) {
     return vtype == right.vtype && vint == right.vint && vstr == right.vstr;
   }
 

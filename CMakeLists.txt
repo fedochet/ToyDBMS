@@ -17,12 +17,12 @@ set(SOURCE_FILES
         dbmse/engine/demo/cross_product/pcrossproductnode.h
         dbmse/engine/demo/projection/pprojectnode.cpp
         dbmse/engine/demo/projection/pprojectnode.h
+        dbmse/engine/demo/query_api/query_api.h
+        dbmse/engine/utils/bd_utils.h
+        dbmse/engine/utils/utils.h
         dbmse/engine/interface/basics.h
         dbmse/engine/interface/interface.cpp
         dbmse/engine/interface/interface.h
-        dbmse/engine/utils/bd_utils.h
-        dbmse/engine/utils/utils.h
-        dbmse/engine/demo/query_api/query_api.h
         dbmse/engine/interface/projection/lprojectnode.h
         dbmse/engine/interface/projection/lprojectnode.cpp
         dbmse/engine/interface/select/lselectnode.cpp
