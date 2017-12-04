@@ -20,5 +20,5 @@ private:
     size_t current_right_pos;
 
     void UpdateLeftBlock();
-    bool UpdateRightBlock();
+    void UpdateRightBlock();
 };

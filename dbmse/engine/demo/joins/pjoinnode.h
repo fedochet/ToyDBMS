@@ -41,7 +41,7 @@ private:
     size_t current_right_pos;
 
     void UpdateLeftBlock();
-    bool UpdateRightBlock();
+    void UpdateRightBlock();
 
     size_t left_join_offset;
     size_t right_join_offset;

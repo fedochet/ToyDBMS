@@ -24,14 +24,12 @@ query_result PCrossProductNode::GetNextBlock() {
          && !current_left_block.empty()) {
 
     if (current_right_pos >= current_right_block.size()) {
-      if (UpdateRightBlock()) {
-        current_left_pos++;
-      }
+      UpdateRightBlock();
     }
 
     if (current_left_pos >= current_left_block.size()) {
       UpdateLeftBlock();
-      break;
+      continue;
     }
 
     for (; current_right_pos < current_right_block.size(); current_right_pos++) {
@@ -59,7 +57,7 @@ void PCrossProductNode::UpdateLeftBlock() {
   current_left_pos = 0;
 }
 
-bool PCrossProductNode::UpdateRightBlock() {
+void PCrossProductNode::UpdateRightBlock() {
   auto right_node = dynamic_cast<PGetNextNode*>(right);
   current_right_block = right_node->GetNextBlock();
   current_right_pos = 0;
@@ -67,10 +65,8 @@ bool PCrossProductNode::UpdateRightBlock() {
   if (current_right_block.empty()) {
     right_node->Rewind();
     current_right_block = right_node->GetNextBlock();
-    return true;
+    current_left_pos++;
   }
-
-  return false;
 }
 
 void PCrossProductNode::Print(size_t indent) {
