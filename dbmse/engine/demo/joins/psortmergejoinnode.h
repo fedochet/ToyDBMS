@@ -17,7 +17,7 @@ struct PSortMergeJoinNode : PGetNextNode {
 
 private:
     utils::BlockIterator left_iterator;
-    utils::BlockIterator right_iterator;
+    utils::CachedBlockIterator right_iterator;
 
     size_t left_join_offset;
     size_t right_join_offset;

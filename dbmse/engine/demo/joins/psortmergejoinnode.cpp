@@ -48,12 +48,18 @@ query_result PSortMergeJoinNode::GetNextBlock() {
     auto &right_row = *right_iterator;
 
     if (left_row[left_join_offset] < right_row[right_join_offset]) {
+      auto left_joined_value = left_row[left_join_offset];
       ++left_iterator;
+
+      if (!left_iterator.Closed() && (*left_iterator)[left_join_offset] == left_joined_value) {
+        right_iterator.RepeatCache();
+      } else {
+        right_iterator.ClearCache();
+      }
       continue;
     }
 
     if (left_row[left_join_offset] == right_row[right_join_offset]) {
-
       query_result_row tmp;
       for (size_t k = 0; k < ln.size(); k++) {
         if (k != left_join_offset) {
@@ -71,11 +77,22 @@ query_result PSortMergeJoinNode::GetNextBlock() {
       result_block.push_back(tmp);
 
       ++right_iterator;
+
+      if (right_iterator.Closed()) {
+        if (!left_iterator.Closed()) {
+          ++left_iterator;
+          if (!left_iterator.Closed()) {
+            right_iterator.RepeatCache();
+          }
+        }
+      }
+
       continue;
     }
 
     if (right_row[right_join_offset] < left_row[left_join_offset]) {
       ++right_iterator;
+      right_iterator.ClearCache();
       continue;
     }
   }

@@ -6,16 +6,36 @@
 
 namespace utils {
     struct BlockIterator {
-        BlockIterator(PGetNextNode* node);
-        const query_result_row& operator* () const;
-        const query_result_row&operator->() const;
-        BlockIterator& operator++();
-        void Rewind();
-        bool Closed() const;
+        explicit BlockIterator(PGetNextNode* node);
+
+        virtual const query_result_row& operator* () const;
+
+        virtual BlockIterator& operator++();
+        virtual void Rewind();
+        virtual bool Closed() const;
 
     private:
         PGetNextNode* node;
         size_t current_pos;
         query_result current_block;
     };
+
+    struct CachedBlockIterator: BlockIterator {
+        explicit CachedBlockIterator(PGetNextNode* node);
+        CachedBlockIterator& operator++() override;
+        CachedBlockIterator &RepeatCache();
+        void Rewind() override;
+
+        const query_result_row &operator*() const override;
+
+        bool Closed() const override;
+
+        void ClearCache();
+
+    private:
+        bool rewinded {false};
+        query_result cache;
+        size_t current_cache_pos {0};
+    };
+
 }
