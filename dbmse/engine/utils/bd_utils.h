@@ -22,27 +22,6 @@ namespace utils {
         query_result current_block;
     };
 
-    struct CachedBlockIterator : BlockIterator {
-        explicit CachedBlockIterator(PGetNextNode* node);
-
-        CachedBlockIterator &operator++() override;
-
-        CachedBlockIterator &RepeatCache();
-
-        void Rewind() override;
-
-        const query_result_row &operator*() const override;
-
-        bool Closed() const override;
-
-        void ClearCache();
-
-    private:
-        bool rewinded{false};
-        query_result cache;
-        size_t current_cache_pos{0};
-    };
-
     struct AdvanceBlockIterator {
         explicit AdvanceBlockIterator(PGetNextNode* node, size_t offset);
 

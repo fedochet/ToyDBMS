@@ -16,11 +16,13 @@ struct PSortMergeJoinNode : PGetNextNode {
     size_t GetAttrNum() override;
 
 private:
-    utils::BlockIterator left_iterator;
-    utils::CachedBlockIterator right_iterator;
-
     size_t left_join_offset;
     size_t right_join_offset;
+
+    utils::BlockIterator left_iterator;
+    utils::AdvanceBlockIterator right_iterator;
+    size_t right_block_pos {0};
+
     size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
 
 };

@@ -36,72 +36,20 @@ bool BlockIterator::Closed() const {
   return current_block.empty();
 }
 
-CachedBlockIterator::CachedBlockIterator(PGetNextNode* node) : BlockIterator(node) {
-}
-
-CachedBlockIterator &CachedBlockIterator::operator++() {
-  if (rewinded) {
-    current_cache_pos++;
-    if (current_cache_pos >= cache.size()) {
-      rewinded = false;
-      current_cache_pos = 0;
-      return *this;
-    } else {
-      return *this;
-    }
-  }
-
-  if (!Closed()) {
-    cache.push_back(**this);
-  }
-
-  BlockIterator::operator++();
-  return *this;
-}
-
-CachedBlockIterator &CachedBlockIterator::RepeatCache() {
-  if (!cache.empty()) {
-    rewinded = true;
-    current_cache_pos = 0;
-  }
-  return *this;
-}
-
-void CachedBlockIterator::ClearCache() {
-  current_cache_pos = 0;
-  cache.clear();
-}
-
-void CachedBlockIterator::Rewind() {
-  BlockIterator::Rewind();
-  ClearCache();
-}
-
-bool CachedBlockIterator::Closed() const {
-  return !rewinded && BlockIterator::Closed();
-}
-
-const query_result_row &CachedBlockIterator::operator*() const {
-  if (rewinded) {
-    return cache[current_cache_pos];
-  }
-
-  return BlockIterator::operator*();
-}
-
 AdvanceBlockIterator::AdvanceBlockIterator(PGetNextNode* node, size_t offset)
-    : iterator(node), offset(offset) {}
+    : iterator(node), offset(offset) {
+  ++(*this);
+}
 
 const query_result &AdvanceBlockIterator::operator*() const {
   return current_block;
 }
 
 AdvanceBlockIterator &AdvanceBlockIterator::operator++() {
-  current_block.empty();
+  current_block.clear();
 
   current_block.push_back(*iterator);
-  while (!iterator.Closed()) {
-    ++iterator;
+  while (!(++iterator).Closed()) {
     if ((*iterator)[offset] == current_block.back()[offset]) {
       current_block.push_back(*iterator);
     } else {
@@ -117,5 +65,5 @@ void AdvanceBlockIterator::Rewind() {
 }
 
 bool AdvanceBlockIterator::Closed() const {
-  return iterator.Closed();
+  return current_block.empty();
 }

@@ -3,13 +3,11 @@
 using namespace std;
 
 PSortMergeJoinNode::PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right)
-    : PGetNextNode(p, left, right), left_iterator(left), right_iterator(right) {
-  vector<name_aliases> ln = left->prototype->fieldNames;
-  vector<name_aliases> rn = right->prototype->fieldNames;
-  left_join_offset = FindColumnOffset(ln);
-  right_join_offset = FindColumnOffset(rn);
-
-}
+    : PGetNextNode(p, left, right),
+      left_join_offset(FindColumnOffset(left->prototype->fieldNames)),
+      right_join_offset(FindColumnOffset(right->prototype->fieldNames)),
+      left_iterator(left),
+      right_iterator(right, right_join_offset) {}
 
 PSortMergeJoinNode::~PSortMergeJoinNode() {
   delete left;
@@ -43,54 +41,45 @@ query_result PSortMergeJoinNode::GetNextBlock() {
     auto &left_row = *left_iterator;
     auto &right_row = *right_iterator;
 
-    if (left_row[left_join_offset] < right_row[right_join_offset]) {
-      auto left_joined_value = left_row[left_join_offset];
+    if (left_row[left_join_offset] < right_row.back()[right_join_offset]) {
       ++left_iterator;
-
-      if (!left_iterator.Closed() && (*left_iterator)[left_join_offset] == left_joined_value) {
-        right_iterator.RepeatCache();
-      } else {
-        right_iterator.ClearCache();
-      }
       continue;
     }
 
-    if (left_row[left_join_offset] == right_row[right_join_offset]) {
-      query_result_row tmp;
-      for (size_t k = 0; k < ln.size(); k++) {
-        if (k != left_join_offset) {
-          tmp.push_back(left_row[k]);
-        }
-      }
-
-      for (size_t k = 0; k < rn.size(); k++) {
-        if (k != right_join_offset) {
-          tmp.push_back(right_row[k]);
-        }
-      }
-
-      tmp.push_back(left_row[left_join_offset]);
-      result_block.push_back(tmp);
-
+    if (right_row.back()[right_join_offset] < left_row[left_join_offset]) {
       ++right_iterator;
+      continue;
+    }
 
-      if (right_iterator.Closed()) {
-        if (!left_iterator.Closed()) {
-          ++left_iterator;
-          if (!left_iterator.Closed()) {
-            right_iterator.RepeatCache();
+    if (left_row[left_join_offset] == right_row.back()[right_join_offset]) {
+
+      while (result_block.size() < BLOCK_SIZE && right_block_pos < right_row.size()) {
+
+        query_result_row tmp;
+        for (size_t k = 0; k < ln.size(); k++) {
+          if (k != left_join_offset) {
+            tmp.push_back(left_row[k]);
           }
         }
+
+        for (size_t k = 0; k < rn.size(); k++) {
+          if (k != right_join_offset) {
+            tmp.push_back(right_row[right_block_pos][k]);
+          }
+        }
+
+        tmp.push_back(left_row[left_join_offset]);
+        result_block.push_back(tmp);
+
+        right_block_pos++;
       }
 
-      continue;
+      if (right_block_pos >= right_row.size()) {
+        right_block_pos = 0;
+        ++left_iterator;
+      }
     }
 
-    if (right_row[right_join_offset] < left_row[left_join_offset]) {
-      ++right_iterator;
-      right_iterator.ClearCache();
-      continue;
-    }
   }
 
   return result_block;
