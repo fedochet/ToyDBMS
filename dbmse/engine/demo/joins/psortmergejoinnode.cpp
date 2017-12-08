@@ -1,12 +1,9 @@
 #include "psortmergejoinnode.h"
-#include "../../interface/joins/lsortmergejoin.h"
 
 using namespace std;
 
 PSortMergeJoinNode::PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right)
-    : PGetNextNode(p, left, right)
-    , left_iterator(left)
-    , right_iterator(right) {
+    : PGetNextNode(p, left, right), left_iterator(left), right_iterator(right) {
   vector<name_aliases> ln = left->prototype->fieldNames;
   vector<name_aliases> rn = right->prototype->fieldNames;
   left_join_offset = FindColumnOffset(ln);
@@ -42,7 +39,6 @@ query_result PSortMergeJoinNode::GetNextBlock() {
   vector<name_aliases> rn = rp->fieldNames;
 
   query_result result_block;
-
   while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed() && !right_iterator.Closed()) {
     auto &left_row = *left_iterator;
     auto &right_row = *right_iterator;

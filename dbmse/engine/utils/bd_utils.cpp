@@ -88,3 +88,34 @@ const query_result_row &CachedBlockIterator::operator*() const {
 
   return BlockIterator::operator*();
 }
+
+AdvanceBlockIterator::AdvanceBlockIterator(PGetNextNode* node, size_t offset)
+    : iterator(node), offset(offset) {}
+
+const query_result &AdvanceBlockIterator::operator*() const {
+  return current_block;
+}
+
+AdvanceBlockIterator &AdvanceBlockIterator::operator++() {
+  current_block.empty();
+
+  current_block.push_back(*iterator);
+  while (!iterator.Closed()) {
+    ++iterator;
+    if ((*iterator)[offset] == current_block.back()[offset]) {
+      current_block.push_back(*iterator);
+    } else {
+      break;
+    }
+  }
+  return *this;
+}
+
+void AdvanceBlockIterator::Rewind() {
+  iterator.Rewind();
+  current_block.empty();
+}
+
+bool AdvanceBlockIterator::Closed() const {
+  return iterator.Closed();
+}
