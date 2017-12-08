@@ -8,13 +8,13 @@ namespace utils {
     struct BlockIterator {
         explicit BlockIterator(PGetNextNode* node);
 
-        virtual const query_result_row &operator*() const;
+        const query_result_row &operator*() const;
 
-        virtual BlockIterator &operator++();
+        BlockIterator &operator++();
 
-        virtual void Rewind();
+        void Rewind();
 
-        virtual bool Closed() const;
+        bool Closed() const;
 
     private:
         PGetNextNode* node;
