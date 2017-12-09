@@ -25,4 +25,5 @@ private:
     utils::AdvanceBlockIterator right_iterator;
     size_t right_block_pos{0};
 
+    query_result_row MergeRows(const query_result_row &left_row, const query_result_row &right_row) const;
 };
