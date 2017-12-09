@@ -15,5 +15,5 @@ LCrossProductNode::LCrossProductNode(LAbstractNode* left, LAbstractNode* right)
 
 LCrossProductNode::~LCrossProductNode() {
   delete left;
-  delete rigth;
+  delete right;
 }

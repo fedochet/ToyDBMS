@@ -24,7 +24,7 @@
 
 LAbstractNode::LAbstractNode(LAbstractNode* left, LAbstractNode* right) {
   this->left = left;
-  this->rigth = right;
+  this->right = right;
 }
 
 LAbstractNode::~LAbstractNode() = default;
@@ -34,7 +34,7 @@ LAbstractNode* LAbstractNode::GetLeft() {
 }
 
 LAbstractNode* LAbstractNode::GetRight() {
-  return rigth;
+  return right;
 }
 
 

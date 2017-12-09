@@ -59,7 +59,7 @@ LSortMergeJoinNode::LSortMergeJoinNode(LAbstractNode* left, LAbstractNode* right
 
 LSortMergeJoinNode::~LSortMergeJoinNode() {
   delete left;
-  delete rigth;
+  delete right;
 }
 
 void LSortMergeJoinNode::AssertColumnsSortedSame(size_t i, size_t j) {
@@ -68,5 +68,28 @@ void LSortMergeJoinNode::AssertColumnsSortedSame(size_t i, size_t j) {
   if (!left_field_sorted || GetLeft()->fieldOrders[i] != GetRight()->fieldOrders[j]) {
     throw runtime_error("You cannot use sort-merge join to join not sorted fiedls!");
   }
+}
+
+join_offset LSortMergeJoinNode::GetLeftOffset() {
+  return make_pair(FindColumnOffset(left->fieldNames), left_offset);
+}
+
+join_offset LSortMergeJoinNode::GetRightOffset() {
+  return make_pair(FindColumnOffset(right->fieldNames), right_offset);
+}
+
+size_t LSortMergeJoinNode::FindColumnOffset(const std::vector<std::vector<std::string>> &names) const {
+  for (size_t i = 0; i < names.size(); i++) {
+    size_t lpos1 = utils::find(names[i], left_offset);
+    size_t lpos2 = utils::find(names[i], right_offset);
+
+    if (lpos1 < names[i].size() || lpos2 < names[i].size()) {
+      return i;
+    }
+  }
+
+  throw runtime_error(
+      string("Cannot joins by column named ") + left_offset + " or " + right_offset
+  );
 
 }

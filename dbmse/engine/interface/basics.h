@@ -107,6 +107,7 @@ typedef std::vector<Value> query_result_row;
 typedef std::vector<query_result_row> query_result;
 
 typedef std::vector<std::string> name_aliases;
+typedef std::pair<size_t, std::string> join_offset;
 
 enum PredicateType{
   PT_EQUALS,

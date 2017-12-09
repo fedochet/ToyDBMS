@@ -66,5 +66,5 @@ LJoinNode::LJoinNode(LAbstractNode* left, LAbstractNode* right,
 
 LJoinNode::~LJoinNode() {
   delete left;
-  delete rigth;
+  delete right;
 }
