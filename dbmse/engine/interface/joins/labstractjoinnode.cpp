@@ -19,45 +19,39 @@ LAbstractJoinNode::LAbstractJoinNode(LAbstractNode* left,
     COLUMN_SORT cs;
     for (size_t i = 0; i < left->fieldNames.size(); i++) {
         for (size_t j = 0; j < right->fieldNames.size(); j++) {
-            name_aliases l = left->fieldNames[i];
-            name_aliases r = right->fieldNames[j];
+            name_aliases left_name_aliases = left->fieldNames[i];
+            name_aliases right_name_aliases = right->fieldNames[j];
 
-            if (contains(l, left_offset)) {
-                if (contains(r, right_offset)) {
-                    match = l;
-                    append_to_back(match, r);
-                    vt = left->fieldTypes[i];
-                    cs = left->fieldOrders[i];
-                }
-            } else if (contains(l, right_offset)) {
-                if (contains(r, left_offset)) {
-                    match = l;
-                    append_to_back(match, r);
-                    vt = left->fieldTypes[i];
-                    cs = left->fieldOrders[i];
-                }
+            if (contains(left_name_aliases, left_offset) && contains(right_name_aliases, right_offset)) {
+                match = left_name_aliases;
+                append_to_back(match, right_name_aliases);
+                vt = left->fieldTypes[i];
+                cs = left->fieldOrders[i];
+            } else if (contains(left_name_aliases, right_offset) && contains(right_name_aliases, left_offset)) {
+                match = left_name_aliases;
+                append_to_back(match, right_name_aliases);
+                vt = left->fieldTypes[i];
+                cs = left->fieldOrders[i];
             }
         }
     }
 
     for (size_t i = 0; i < left->fieldNames.size(); i++) {
         name_aliases l = left->fieldNames[i];
-        if (!contains(l, left_offset))
-            if (!contains(l, right_offset)) {
-                fieldNames.push_back(l);
-                fieldTypes.push_back(left->fieldTypes[i]);
-                fieldOrders.push_back(left->fieldOrders[i]);
-            }
+        if (!contains(l, left_offset) && !contains(l, right_offset)) {
+            fieldNames.push_back(l);
+            fieldTypes.push_back(left->fieldTypes[i]);
+            fieldOrders.push_back(left->fieldOrders[i]);
+        }
     }
 
     for (size_t i = 0; i < right->fieldNames.size(); i++) {
         name_aliases r = right->fieldNames[i];
-        if (!contains(r, left_offset))
-            if (!contains(r, right_offset)) {
-                fieldNames.push_back(r);
-                fieldTypes.push_back(right->fieldTypes[i]);
-                fieldOrders.push_back(right->fieldOrders[i]);
-            }
+        if (!contains(r, left_offset) && !contains(r, right_offset)) {
+            fieldNames.push_back(r);
+            fieldTypes.push_back(right->fieldTypes[i]);
+            fieldOrders.push_back(right->fieldOrders[i]);
+        }
     }
 
     fieldNames.push_back(match);
