@@ -1,13 +1,13 @@
 #pragma once
 
-#include "pjoinnode.h"
+#include "../../interface/basics.h"
 
 namespace utils {
 
     template<class LogicalJoinNode>
     struct TableRowMerger {
-        explicit TableRowMerger(LogicalJoinNode* p)
-            : prototype(p) {};
+
+        explicit TableRowMerger(LogicalJoinNode* p) : prototype(p) {};
 
         query_result_row MergeRows(const query_result_row &left_row, const query_result_row &right_row) const {
 

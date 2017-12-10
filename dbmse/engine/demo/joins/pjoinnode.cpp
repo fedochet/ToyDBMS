@@ -26,6 +26,7 @@ using namespace std;
 
 PJoinNode::PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right)
     : PGetNextNode(p, left, right)
+    , merger(p)
     , left_iterator(left)
     , right_iterator(right) {
 
@@ -75,21 +76,8 @@ query_result PJoinNode::GetNextBlock() {
         continue;
       }
 
-      query_result_row tmp;
-      for (size_t k = 0; k < ln.size(); k++) {
-        if (k != left_join_offset) {
-          tmp.push_back(left_row[k]);
-        }
-      }
+      result_block.push_back(merger.MergeRows(left_row, right_row));
 
-      for (size_t k = 0; k < rn.size(); k++) {
-        if (k != right_join_offset) {
-          tmp.push_back(right_row[k]);
-        }
-      }
-
-      tmp.push_back(left_row[left_join_offset]);
-      result_block.push_back(tmp);
       ++right_iterator;
       if (result_block.size() >= BLOCK_SIZE) {
         break;
@@ -106,8 +94,8 @@ void PJoinNode::Rewind() {
 }
 
 size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
-  auto offset_name_1 = (dynamic_cast<LJoinNode*>(prototype))->offset1;
-  auto offset_name_2 = (dynamic_cast<LJoinNode*>(prototype))->offset2;
+  auto offset_name_1 = (dynamic_cast<LJoinNode*>(prototype))->left_offset;
+  auto offset_name_2 = (dynamic_cast<LJoinNode*>(prototype))->right_offset;
 
   for (size_t i = 0; i < names.size(); i++) {
     size_t lpos1 = utils::find(names[i], offset_name_1);
@@ -128,9 +116,9 @@ void PJoinNode::Print(size_t indent) {
     cout << " ";
   }
   cout << "NL-JOIN: "
-       << (dynamic_cast<LJoinNode*>(prototype))->offset1
+       << (dynamic_cast<LJoinNode*>(prototype))->left_offset
        << "="
-       << (dynamic_cast<LJoinNode*>(prototype))->offset2
+       << (dynamic_cast<LJoinNode*>(prototype))->right_offset
        << endl;
   left->Print(indent + 2);
   right->Print(indent + 2);

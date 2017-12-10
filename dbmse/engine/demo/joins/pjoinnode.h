@@ -23,6 +23,7 @@
 #include "../pgetnextnode.h"
 #include "../../utils/bd_utils.h"
 #include "../../interface/joins/ljoinnode.h"
+#include "joinutils.h"
 
 class PJoinNode : public PGetNextNode{
   public:
@@ -37,6 +38,7 @@ class PJoinNode : public PGetNextNode{
     size_t GetAttrNum() override;
 
 private:
+    utils::TableRowMerger<LJoinNode> merger;
     utils::BlockIterator left_iterator;
     utils::BlockIterator right_iterator;
 
