@@ -22,14 +22,14 @@
 #include "../../interface/interface.h"
 #include "../pgetnextnode.h"
 #include "../../utils/bd_utils.h"
-#include "../../interface/joins/ljoinnode.h"
+#include "../../interface/joins/lnestedloopjoinnode.h"
 #include "joinutils.h"
 
-class PJoinNode : public PGetNextNode {
+class PNestedLoopJoinNode : public PGetNextNode {
 public:
-    PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right);
+    PNestedLoopJoinNode(LNestedLoopJoinNode* p, PGetNextNode* left, PGetNextNode* right);
 
-    ~PJoinNode();
+    ~PNestedLoopJoinNode();
 
     void Print(size_t indent) override;
 

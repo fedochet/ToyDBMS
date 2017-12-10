@@ -9,8 +9,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverlo
 set(SOURCE_FILES
         dbmse/engine/demo/pgetnextnode.cpp
         dbmse/engine/demo/pgetnextnode.h
-        dbmse/engine/demo/joins/pjoinnode.cpp
-        dbmse/engine/demo/joins/pjoinnode.h
+        dbmse/engine/demo/joins/pnestedloopjoinnode.cpp
+        dbmse/engine/demo/joins/pnestedloopjoinnode.h
         dbmse/engine/demo/select/pselectnode.cpp
         dbmse/engine/demo/select/pselectnode.h
         dbmse/engine/demo/cross_product/pcrossproductnode.cpp
@@ -27,8 +27,8 @@ set(SOURCE_FILES
         dbmse/engine/interface/projection/lprojectnode.cpp
         dbmse/engine/interface/select/lselectnode.cpp
         dbmse/engine/interface/select/lselectnode.h
-        dbmse/engine/interface/joins/ljoinnode.cpp
-        dbmse/engine/interface/joins/ljoinnode.h
+        dbmse/engine/interface/joins/lnestedloopjoinnode.cpp
+        dbmse/engine/interface/joins/lnestedloopjoinnode.h
         dbmse/engine/interface/crossproduct/lcrossproductnode.cpp
         dbmse/engine/interface/crossproduct/lcrossproductnode.h
         dbmse/engine/interface/joins/lsortmergejoin.cpp

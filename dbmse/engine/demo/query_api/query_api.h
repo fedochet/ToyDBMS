@@ -3,10 +3,10 @@
 #include <tuple>
 #include "../projection/pprojectnode.h"
 #include "../cross_product/pcrossproductnode.h"
-#include "../joins/pjoinnode.h"
+#include "../joins/pnestedloopjoinnode.h"
 #include "../select/pselectnode.h"
 #include "../../interface/select/lselectnode.h"
-#include "../../interface/joins/ljoinnode.h"
+#include "../../interface/joins/lnestedloopjoinnode.h"
 #include "../../interface/joins/lsortmergejoin.h"
 #include "../joins/psortmergejoinnode.h"
 
@@ -17,11 +17,11 @@ PResultNode* QueryFactory(LAbstractNode* node){
     return new PSelectNode(selectNode, p);
   }
 
-  if (auto* joinNode = dynamic_cast<LJoinNode*>(node)) {
+  if (auto* joinNode = dynamic_cast<LNestedLoopJoinNode*>(node)) {
     auto* leftPNode = dynamic_cast<PGetNextNode*>(QueryFactory(joinNode->GetLeft()));
     auto* rightPNode = dynamic_cast<PGetNextNode*>(QueryFactory(joinNode->GetRight()));
 
-    return new PJoinNode(joinNode, leftPNode, rightPNode);
+    return new PNestedLoopJoinNode(joinNode, leftPNode, rightPNode);
   }
 
   if (auto* sortJoinNode = dynamic_cast<LSortMergeJoinNode*>(node)) {

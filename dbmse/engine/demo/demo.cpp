@@ -43,7 +43,7 @@ int main(){
     std::cout << std::endl << "Query2: nested loop join" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
-    LJoinNode* join_node = new LJoinNode(new LSelectNode(bt1, {}), new LSelectNode(bt2, {}), "table1.groups",
+    LNestedLoopJoinNode* join_node = new LNestedLoopJoinNode(new LSelectNode(bt1, {}), new LSelectNode(bt2, {}), "table1.groups",
                                          "table2.id2");
     PResultNode* join_physical_node = QueryFactory(join_node);
 
@@ -66,7 +66,7 @@ int main(){
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
     LAbstractNode* n2 = new LSelectNode(bt2, {});
-//    LJoinNode* n3 = new LJoinNode(n1, n2, "table1.id", "table2.id2", 666);
+//    LNestedLoopJoinNode* n3 = new LNestedLoopJoinNode(n1, n2, "table1.id", "table2.id2", 666);
     auto* n3 = new LCrossProductNode(n1, n2);
     PResultNode* q1 = QueryFactory(n3);
     std::cout << std::endl;

@@ -19,27 +19,27 @@
 
 #include<algorithm>
 
-#include "pjoinnode.h"
+#include "pnestedloopjoinnode.h"
 
 using namespace std;
 
-PJoinNode::PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right)
+PNestedLoopJoinNode::PNestedLoopJoinNode(LNestedLoopJoinNode* p, PGetNextNode* left, PGetNextNode* right)
     : PGetNextNode(p, left, right), merger(p), left_iterator(left), right_iterator(right) {
 
     left_join_offset = p->GetLeftOffset().first;
     right_join_offset = p->GetRightOffset().first;
 }
 
-PJoinNode::~PJoinNode() {
+PNestedLoopJoinNode::~PNestedLoopJoinNode() {
     delete left;
     delete right;
 }
 
-size_t PJoinNode::GetAttrNum() {
+size_t PNestedLoopJoinNode::GetAttrNum() {
     return left->GetAttrNum() + right->GetAttrNum() - 1;
 }
 
-query_result PJoinNode::GetNextBlock() {
+query_result PNestedLoopJoinNode::GetNextBlock() {
     PGetNextNode* l = dynamic_cast<PGetNextNode*>(left);
     PGetNextNode* r = dynamic_cast<PGetNextNode*>(right);
     LAbstractNode* lp = l->prototype;
@@ -82,19 +82,19 @@ query_result PJoinNode::GetNextBlock() {
     return result_block;
 }
 
-void PJoinNode::Rewind() {
+void PNestedLoopJoinNode::Rewind() {
     left_iterator.Rewind();
     right_iterator.Rewind();
 }
 
-void PJoinNode::Print(size_t indent) {
+void PNestedLoopJoinNode::Print(size_t indent) {
     for (size_t i = 0; i < indent; i++) {
         cout << " ";
     }
     cout << "NL-JOIN: "
-         << (dynamic_cast<LJoinNode*>(prototype)->GetLeftOffset().second)
+         << (dynamic_cast<LNestedLoopJoinNode*>(prototype)->GetLeftOffset().second)
          << "="
-         << (dynamic_cast<LJoinNode*>(prototype)->GetRightOffset().second)
+         << (dynamic_cast<LNestedLoopJoinNode*>(prototype)->GetRightOffset().second)
          << endl;
     left->Print(indent + 2);
     right->Print(indent + 2);

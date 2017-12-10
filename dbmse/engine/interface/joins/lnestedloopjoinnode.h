@@ -4,8 +4,8 @@
 #include "../../utils/utils.h"
 #include "labstractjoinnode.h"
 
-class LJoinNode : public LAbstractJoinNode {
+class LNestedLoopJoinNode : public LAbstractJoinNode {
 public:
     // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2);
+    LNestedLoopJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2);
 };
