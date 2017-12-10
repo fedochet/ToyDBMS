@@ -3,6 +3,7 @@
 #include "../pgetnextnode.h"
 #include "../../utils/bd_utils.h"
 #include "../../interface/joins/lsortmergejoin.h"
+#include "joinutils.h"
 
 struct PSortMergeJoinNode : PGetNextNode {
     PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right);
@@ -18,6 +19,7 @@ struct PSortMergeJoinNode : PGetNextNode {
     size_t GetAttrNum() override;
 
 private:
+    utils::TableRowMerger<LSortMergeJoinNode> merger;
     join_offset left_join_offset;
     join_offset right_join_offset;
 

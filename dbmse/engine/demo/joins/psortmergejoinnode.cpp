@@ -4,6 +4,7 @@ using namespace std;
 
 PSortMergeJoinNode::PSortMergeJoinNode(LSortMergeJoinNode* p, PGetNextNode* left, PGetNextNode* right)
     : PGetNextNode(p, left, right),
+      merger(p),
       left_join_offset(p->GetLeftOffset()),
       right_join_offset(p->GetRightOffset()),
       left_iterator(left),
@@ -63,23 +64,9 @@ query_result PSortMergeJoinNode::GetNextBlock() {
 
 }
 
-query_result_row PSortMergeJoinNode::MergeRows(const query_result_row &left_row, const query_result_row &right_row) const {
-    query_result_row tmp;
-
-    for (size_t k = 0; k < left->prototype->fieldNames.size(); k++) {
-        if (k != left_join_offset.first) {
-            tmp.push_back(left_row[k]);
-        }
-    }
-
-    for (size_t k = 0; k < right->prototype->fieldNames.size(); k++) {
-        if (k != right_join_offset.first) {
-            tmp.push_back(right_row[k]);
-        }
-    }
-
-    tmp.push_back(left_row[left_join_offset.first]);
-    return tmp;
+query_result_row
+PSortMergeJoinNode::MergeRows(const query_result_row &left_row, const query_result_row &right_row) const {
+    return merger.MergeRows(left_row, right_row);
 }
 
 void PSortMergeJoinNode::Rewind() {
