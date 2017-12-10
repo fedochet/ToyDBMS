@@ -25,14 +25,16 @@
 #include "../../interface/joins/ljoinnode.h"
 #include "joinutils.h"
 
-class PJoinNode : public PGetNextNode{
-  public:
+class PJoinNode : public PGetNextNode {
+public:
     PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right);
+
     ~PJoinNode();
 
     void Print(size_t indent) override;
 
     query_result GetNextBlock() override;
+
     void Rewind() override;
 
     size_t GetAttrNum() override;
@@ -44,5 +46,4 @@ private:
 
     size_t left_join_offset;
     size_t right_join_offset;
-    size_t FindColumnOffset(const std::vector<std::vector<std::string>> &names) const;
 };

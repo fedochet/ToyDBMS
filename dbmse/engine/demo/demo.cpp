@@ -43,11 +43,8 @@ int main(){
     std::cout << std::endl << "Query2: nested loop join" << std::endl;
     BaseTable bt1 = BaseTable("table1");
     BaseTable bt2 = BaseTable("table2");
-    LJoinNode* join_node = new LJoinNode(
-        new LSelectNode(bt1, {}),
-        new LSelectNode(bt2, {}),
-        "table1.groups", "table2.id2", 0
-    );
+    LJoinNode* join_node = new LJoinNode(new LSelectNode(bt1, {}), new LSelectNode(bt2, {}), "table1.groups",
+                                         "table2.id2");
     PResultNode* join_physical_node = QueryFactory(join_node);
 
     join_physical_node->Print(0);

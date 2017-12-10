@@ -20,106 +20,82 @@
 #include<algorithm>
 
 #include "pjoinnode.h"
-#include "../../interface/joins/ljoinnode.h"
 
 using namespace std;
 
 PJoinNode::PJoinNode(LJoinNode* p, PGetNextNode* left, PGetNextNode* right)
-    : PGetNextNode(p, left, right)
-    , merger(p)
-    , left_iterator(left)
-    , right_iterator(right) {
+    : PGetNextNode(p, left, right), merger(p), left_iterator(left), right_iterator(right) {
 
-  vector<name_aliases> ln = left->prototype->fieldNames;
-  vector<name_aliases> rn = right->prototype->fieldNames;
-  left_join_offset = FindColumnOffset(ln);
-  right_join_offset = FindColumnOffset(rn);
+    left_join_offset = p->GetLeftOffset().first;
+    right_join_offset = p->GetRightOffset().first;
 }
 
 PJoinNode::~PJoinNode() {
-  delete left;
-  delete right;
+    delete left;
+    delete right;
 }
 
 size_t PJoinNode::GetAttrNum() {
-  return left->GetAttrNum() + right->GetAttrNum() - 1;
+    return left->GetAttrNum() + right->GetAttrNum() - 1;
 }
 
 query_result PJoinNode::GetNextBlock() {
-  PGetNextNode* l = dynamic_cast<PGetNextNode*>(left);
-  PGetNextNode* r = dynamic_cast<PGetNextNode*>(right);
-  LAbstractNode* lp = l->prototype;
-  LAbstractNode* rp = r->prototype;
-  vector<name_aliases> ln = lp->fieldNames;
-  vector<name_aliases> rn = rp->fieldNames;
+    PGetNextNode* l = dynamic_cast<PGetNextNode*>(left);
+    PGetNextNode* r = dynamic_cast<PGetNextNode*>(right);
+    LAbstractNode* lp = l->prototype;
+    LAbstractNode* rp = r->prototype;
+    vector<name_aliases> ln = lp->fieldNames;
+    vector<name_aliases> rn = rp->fieldNames;
 
-  ValueType vt = lp->fieldTypes[left_join_offset];
+    ValueType vt = lp->fieldTypes[left_join_offset];
 
-  query_result result_block;
-  while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed()) {
+    query_result result_block;
+    while (result_block.size() < BLOCK_SIZE && !left_iterator.Closed()) {
 
-    if (right_iterator.Closed()) {
-      right_iterator.Rewind();
-      ++left_iterator;
+        if (right_iterator.Closed()) {
+            right_iterator.Rewind();
+            ++left_iterator;
+        }
+
+        if (left_iterator.Closed()) {
+            break;
+        }
+
+        while (!right_iterator.Closed()) {
+            auto &left_row = *left_iterator;
+            auto &right_row = *right_iterator;
+
+            if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
+                ++right_iterator;
+                continue;
+            }
+
+            result_block.push_back(merger.MergeRows(left_row, right_row));
+
+            ++right_iterator;
+            if (result_block.size() >= BLOCK_SIZE) {
+                break;
+            }
+        }
     }
 
-    if (left_iterator.Closed()) {
-      break;
-    }
-
-    while (!right_iterator.Closed()) {
-      auto &left_row = *left_iterator;
-      auto &right_row = *right_iterator;
-
-      if (left_row[left_join_offset].vtype != vt || left_row[left_join_offset] != right_row[right_join_offset]) {
-        ++right_iterator;
-        continue;
-      }
-
-      result_block.push_back(merger.MergeRows(left_row, right_row));
-
-      ++right_iterator;
-      if (result_block.size() >= BLOCK_SIZE) {
-        break;
-      }
-    }
-  }
-
-  return result_block;
+    return result_block;
 }
 
 void PJoinNode::Rewind() {
-  left_iterator.Rewind();
-  right_iterator.Rewind();
-}
-
-size_t PJoinNode::FindColumnOffset(const vector<name_aliases> &names) const {
-  auto offset_name_1 = (dynamic_cast<LJoinNode*>(prototype))->left_offset;
-  auto offset_name_2 = (dynamic_cast<LJoinNode*>(prototype))->right_offset;
-
-  for (size_t i = 0; i < names.size(); i++) {
-    size_t lpos1 = utils::find(names[i], offset_name_1);
-    size_t lpos2 = utils::find(names[i], offset_name_2);
-
-    if (lpos1 < names[i].size() || lpos2 < names[i].size()) {
-      return i;
-    }
-  }
-
-  throw runtime_error(
-      string("Cannot joins by column named ") + offset_name_1 + " or " + offset_name_2
-  );
+    left_iterator.Rewind();
+    right_iterator.Rewind();
 }
 
 void PJoinNode::Print(size_t indent) {
-  for (size_t i = 0; i < indent; i++) {
-    cout << " ";
-  }
-  cout << "NL-JOIN: "
-       << (dynamic_cast<LJoinNode*>(prototype))->left_offset
-       << "="
-       << (dynamic_cast<LJoinNode*>(prototype))->right_offset
-       << endl;
-  left->Print(indent + 2);
-  right->Print(indent + 2);
+    for (size_t i = 0; i < indent; i++) {
+        cout << " ";
+    }
+    cout << "NL-JOIN: "
+         << (dynamic_cast<LJoinNode*>(prototype)->GetLeftOffset().second)
+         << "="
+         << (dynamic_cast<LJoinNode*>(prototype)->GetRightOffset().second)
+         << endl;
+    left->Print(indent + 2);
+    right->Print(indent + 2);
 }
