@@ -61,7 +61,7 @@ query_result PNestedLoopJoinNode::GetNextBlock() {
             break;
         }
 
-        while (!right_iterator.Closed()) {
+        while (!right_iterator.Closed() && result_block.size() < BLOCK_SIZE) {
             auto &left_row = *left_iterator;
             auto &right_row = *right_iterator;
 
@@ -73,9 +73,6 @@ query_result PNestedLoopJoinNode::GetNextBlock() {
             result_block.push_back(merger.MergeRows(left_row, right_row));
 
             ++right_iterator;
-            if (result_block.size() >= BLOCK_SIZE) {
-                break;
-            }
         }
     }
 

@@ -26,7 +26,6 @@ void PSortMergeJoinNode::Print(size_t indent) {
          << endl;
     left->Print(indent + 2);
     right->Print(indent + 2);
-
 }
 
 query_result PSortMergeJoinNode::GetNextBlock() {
