@@ -40,7 +40,7 @@ public:
     size_t GetAttrNum() override;
 
 private:
-    utils::TableRowMerger<LJoinNode> merger;
+    utils::TableRowMerger merger;
     utils::BlockIterator left_iterator;
     utils::BlockIterator right_iterator;
 

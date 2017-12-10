@@ -19,7 +19,7 @@ struct PSortMergeJoinNode : PGetNextNode {
     size_t GetAttrNum() override;
 
 private:
-    utils::TableRowMerger<LSortMergeJoinNode> merger;
+    utils::TableRowMerger merger;
     join_offset left_join_offset;
     join_offset right_join_offset;
 
