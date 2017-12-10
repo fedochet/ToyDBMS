@@ -9,6 +9,8 @@
 #include "../../interface/joins/lnestedloopjoinnode.h"
 #include "../../interface/joins/lsortmergejoin.h"
 #include "../joins/psortmergejoinnode.h"
+#include "../../interface/joins/lhashjoinnode.h"
+#include "../joins/phashjoinnode.h"
 
 // Here be rewriter and optimizer
 PResultNode* QueryFactory(LAbstractNode* node){
@@ -31,6 +33,12 @@ PResultNode* QueryFactory(LAbstractNode* node){
     return new PSortMergeJoinNode(sortJoinNode, leftPNode, rightPNode);
   }
 
+  if (auto* hashJoinNode = dynamic_cast<LHashJoinNode*>(node)) {
+    auto* leftPNode = dynamic_cast<PGetNextNode*>(QueryFactory(hashJoinNode->GetLeft()));
+    auto* rightPNode = dynamic_cast<PGetNextNode*>(QueryFactory(hashJoinNode->GetRight()));
+
+    return new PHashJoinNode(hashJoinNode, leftPNode, rightPNode);
+  }
 
   if (auto* l_cross_product_node = dynamic_cast<LCrossProductNode*>(node)) {
     auto* rres = dynamic_cast<PGetNextNode*>(QueryFactory(node->GetRight()));
