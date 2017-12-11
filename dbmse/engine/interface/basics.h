@@ -166,18 +166,20 @@ private:
 struct PredicateInfo {
     PredicateType ptype;
     int attribute;
+    Value value;
     ValueType vtype;
     int vint;
     std::string vstr;
 
-    PredicateInfo(PredicateType ptype, ValueType vtype, int attribute, int vint, std::string vstr)
+    PredicateInfo(PredicateType ptype, int attribute, Value v)
         : ptype(ptype),
           attribute(attribute),
-          vtype(vtype),
-          vint(vint),
-          vstr(vstr) {}
+          value(v),
+          vtype(value.vtype),
+          vint(value.vint),
+          vstr(value.vstr) {}
 
-    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.vtype, p.attribute, p.vint, p.vstr) {}
+    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.attribute, p.value) {}
 
     PredicateInfo() {}
 

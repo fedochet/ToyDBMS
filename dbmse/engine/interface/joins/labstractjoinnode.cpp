@@ -83,3 +83,8 @@ size_t LAbstractJoinNode::FindColumnOffset(const std::vector<std::vector<std::st
     );
 
 }
+
+LAbstractJoinNode::~LAbstractJoinNode() {
+    delete left;
+    delete right;
+}

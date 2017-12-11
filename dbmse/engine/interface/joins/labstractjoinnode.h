@@ -7,6 +7,8 @@ struct LAbstractJoinNode : LAbstractNode {
 
     join_offset GetRightOffset();
 
+    ~LAbstractJoinNode() override;
+
 protected: // to enforce inheritance
     LAbstractJoinNode(LAbstractNode* left, LAbstractNode* right, std::string left_offset, std::string right_offset);
 
