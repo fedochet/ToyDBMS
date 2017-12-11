@@ -34,33 +34,6 @@ PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
       pos(0) {
 }
 
-template<typename T>
-bool apply_comparison_predicate(const PredicateType &type, const T &original, const T &compare_to) {
-  switch (type) {
-    case PT_EQUALS:
-      if (original == compare_to) {
-        return true;
-      }
-      break;
-    case PT_GREATERTHAN:
-      if (original >= compare_to) {
-        return true;
-      }
-      break;
-  }
-
-  return false;
-
-}
-
-bool apply_int_predicate(const Value &compared_attribute, const PredicateInfo &predicate) {
-  return apply_comparison_predicate(predicate.ptype, compared_attribute.vint, predicate.vint);
-}
-
-bool apply_string_predicate(const Value &compared_attribute, const PredicateInfo &predicate) {
-  return apply_comparison_predicate(predicate.ptype, compared_attribute.vstr, predicate.vstr);
-}
-
 bool
 matches_predicates(const query_result_row &record, const vector<PredicateInfo> &predicates) {
   for (auto &predicate: predicates) {

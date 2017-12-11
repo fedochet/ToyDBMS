@@ -167,17 +167,11 @@ struct PredicateInfo {
     PredicateType ptype;
     int attribute;
     Value value;
-    ValueType vtype;
-    int vint;
-    std::string vstr;
 
     PredicateInfo(PredicateType ptype, int attribute, Value v)
         : ptype(ptype),
           attribute(attribute),
-          value(v),
-          vtype(value.vtype),
-          vint(value.vint),
-          vstr(value.vstr) {}
+          value(v) {}
 
     PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.attribute, p.value) {}
 
@@ -188,9 +182,9 @@ struct PredicateInfo {
     std::unique_ptr<Predicate> ToPredicate() const {
         switch (ptype) {
             case PT_GREATERTHAN:
-                return std::make_unique<GreaterThanPredicate>(attribute, Value(vtype, vint, vstr));
+                return std::make_unique<GreaterThanPredicate>(attribute, value);
             case PT_EQUALS:
-                return std::make_unique<EqualsPredicate>(attribute, Value(vtype, vint, vstr));
+                return std::make_unique<EqualsPredicate>(attribute, value);
         }
 
         throw std::runtime_error("Unknown predicate type!");
@@ -205,10 +199,10 @@ inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {
     else
         stream << " > ";
 
-    if (p.vtype == VT_INT)
-        stream << p.vint;
+    if (p.value.vtype == VT_INT)
+        stream << p.value.vint;
     else
-        stream << p.vstr;
+        stream << p.value.vstr;
     return stream;
 }
 
