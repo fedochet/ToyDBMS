@@ -28,12 +28,12 @@
 
 const int MAXLEN = 1000;
 
-enum ValueType : short{
-  VT_INT,
-  VT_STRING
+enum ValueType : short {
+    VT_INT,
+    VT_STRING
 };
 
-enum COLUMN_SORT{
+enum COLUMN_SORT {
     CS_ASCENDING,
     CS_DESCENDING,
     CS_NO,
@@ -41,64 +41,66 @@ enum COLUMN_SORT{
 };
 
 struct Value {
-  ValueType vtype;
-  int vint;
-  std::string vstr;
+    ValueType vtype;
+    int vint;
+    std::string vstr;
 
-  Value(int v){
-    vtype = VT_INT;
-    vint = v;
-    vstr = "";
-  }
-
-  Value(std::string v){
-    vtype = VT_STRING;
-    vstr = v;
-    vint = 0;
-  }
-
-  Value(){
-    vtype = VT_INT;
-    vint = 0;
-    vstr = "";
-  }
-
-  explicit operator int() const {return vint;}
-  explicit operator std::string() const {return vstr;}
-  ~Value() = default;
-
-  bool operator==(const Value& right) const {
-    if (vtype != right.vtype) {
-      throw std::runtime_error("Cannot compare Values of different types!");
+    Value(int v) {
+        vtype = VT_INT;
+        vint = v;
+        vstr = "";
     }
 
-    switch (vtype) {
-      case VT_INT:
-        return vint == right.vint;
-      case VT_STRING:
-        return vstr == right.vstr;
+    Value(std::string v) {
+        vtype = VT_STRING;
+        vstr = v;
+        vint = 0;
     }
 
-    throw std::runtime_error("Cannot get here!");
-  }
+    Value() {
+        vtype = VT_INT;
+        vint = 0;
+        vstr = "";
+    }
 
-  bool operator!=(const Value& right) const {
-    return !(*this == right);
-  }
+    explicit operator int() const { return vint; }
 
-    bool operator<(const Value& right) const {
-      if (vtype != right.vtype) {
-        throw std::runtime_error("Cannot compare Values of different types!");
-      }
+    explicit operator std::string() const { return vstr; }
 
-      switch (vtype) {
-        case VT_INT:
-          return vint < right.vint;
-        case VT_STRING:
-          return vstr < right.vstr;
-      }
+    ~Value() = default;
 
-      throw std::runtime_error("Cannot get here!");
+    bool operator==(const Value &right) const {
+        if (vtype != right.vtype) {
+            throw std::runtime_error("Cannot compare Values of different types!");
+        }
+
+        switch (vtype) {
+            case VT_INT:
+                return vint == right.vint;
+            case VT_STRING:
+                return vstr == right.vstr;
+        }
+
+        throw std::runtime_error("Cannot get here!");
+    }
+
+    bool operator!=(const Value &right) const {
+        return !(*this == right);
+    }
+
+    bool operator<(const Value &right) const {
+        if (vtype != right.vtype) {
+            throw std::runtime_error("Cannot compare Values of different types!");
+        }
+
+        switch (vtype) {
+            case VT_INT:
+                return vint < right.vint;
+            case VT_STRING:
+                return vstr < right.vstr;
+        }
+
+        throw std::runtime_error("Cannot get here!");
     }
 
 };
@@ -109,121 +111,121 @@ typedef std::vector<query_result_row> query_result;
 typedef std::vector<std::string> name_aliases;
 typedef std::pair<size_t, std::string> join_offset;
 
-enum PredicateType{
-  PT_EQUALS,
-  PT_GREATERTHAN,
+enum PredicateType {
+    PT_EQUALS,
+    PT_GREATERTHAN,
 };
 
-struct Predicate{
-  PredicateType ptype;
-  ValueType vtype;
-  int attribute;
-  int vint;
-  std::string vstr;
-  Predicate(PredicateType ptype, ValueType vtype, int attribute, int vint, std::string vstr){
-    this->ptype = ptype;
-    this->vtype = vtype;
-    this->attribute = attribute;
-    this->vint = vint;
-    this->vstr = vstr;
-  }
-  Predicate(const Predicate& p){
-    this->ptype = p.ptype;
-    this->vtype = p.vtype;
-    this->attribute = p.attribute;
-    this->vint = p.vint;
-    this->vstr = p.vstr;
-  }
-  Predicate(){}
-  ~Predicate(){}
+struct Predicate {
+    PredicateType ptype;
+    int attribute;
+    ValueType vtype;
+    int vint;
+    std::string vstr;
+
+    Predicate(PredicateType ptype, ValueType vtype, int attribute, int vint, std::string vstr)
+        : ptype(ptype),
+          attribute(attribute),
+          vtype(vtype),
+          vint(vint),
+          vstr(vstr) {}
+
+    Predicate(const Predicate &p): Predicate(p.ptype, p.vtype, p.attribute, p.vint, p.vstr) {}
+
+    Predicate() {}
+
+    ~Predicate() {}
 };
 
-inline std::ostream& operator<<(std::ostream& stream, const Predicate& p){
-  stream << "[" << p.attribute << "]";
-  if (p.ptype == PT_EQUALS)
-    stream << " == ";
-  else
-    stream << " > ";
-
-  if(p.vtype == VT_INT)
-      stream << p.vint;
+inline std::ostream &operator<<(std::ostream &stream, const Predicate &p) {
+    stream << "[" << p.attribute << "]";
+    if (p.ptype == PT_EQUALS)
+        stream << " == ";
     else
-      stream << p.vstr;
-  return stream;
+        stream << " > ";
+
+    if (p.vtype == VT_INT)
+        stream << p.vint;
+    else
+        stream << p.vstr;
+    return stream;
 }
 
-struct BaseTable{
-  std::string relpath;
-  int nbAttr;
-  std::vector<ValueType> vtypes;
-  std::vector<std::string> vnames;
-  std::vector<COLUMN_SORT> vorders;
-  BaseTable(){}
-  BaseTable(std::string p): relpath(p){
-    std::string line, word;
-    std::ifstream fin(relpath.c_str());
-    if (fin.is_open()){
-      fin >> nbAttr;
-      // names
-      getline(fin, line);
-      getline(fin, line);
-      std::istringstream iss(line, std::istringstream::in);
-      while (iss >> word){
-        vnames.push_back(word);
-      }
-      // types
-      getline(fin, line);
-      std::istringstream iss2(line, std::istringstream::in);
-      while (iss2 >> word){
-        if (word == "INT")
-          vtypes.push_back(VT_INT);
+struct BaseTable {
+    std::string relpath;
+    int nbAttr;
+    std::vector<ValueType> vtypes;
+    std::vector<std::string> vnames;
+    std::vector<COLUMN_SORT> vorders;
+
+    BaseTable() {}
+
+    BaseTable(std::string p) : relpath(p) {
+        std::string line, word;
+        std::ifstream fin(relpath.c_str());
+        if (fin.is_open()) {
+            fin >> nbAttr;
+            // names
+            getline(fin, line);
+            getline(fin, line);
+            std::istringstream iss(line, std::istringstream::in);
+            while (iss >> word) {
+                vnames.push_back(word);
+            }
+            // types
+            getline(fin, line);
+            std::istringstream iss2(line, std::istringstream::in);
+            while (iss2 >> word) {
+                if (word == "INT")
+                    vtypes.push_back(VT_INT);
+                else
+                    vtypes.push_back(VT_STRING);
+            }
+            // order
+            getline(fin, line);
+            std::istringstream iss3(line, std::istringstream::in);
+            while (iss3 >> word) {
+                if (word == "ASCENDING")
+                    vorders.push_back(CS_ASCENDING);
+                else if (word == "DESCENDING")
+                    vorders.push_back(CS_DESCENDING);
+                else if (word == "UNKNOWN")
+                    vorders.push_back(CS_UNKNOWN);
+                else if (word == "UNKNOWN")
+                    vorders.push_back(CS_NO);
+            }
+
+            fin.close();
+        } else std::cout << "Unable to open file";
+    }
+
+    ~BaseTable() {}
+};
+
+inline std::ostream &operator<<(std::ostream &stream, const BaseTable &bt) {
+    stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
+    for (int i = 0; i < bt.nbAttr; i++) {
+        stream << i << ". " << bt.vnames[i] << " ";
+        if (bt.vtypes[i] == VT_INT)
+            stream << "INT ";
         else
-          vtypes.push_back(VT_STRING);
-      }
-      // order
-      getline(fin, line);
-      std::istringstream iss3(line, std::istringstream::in);
-      while (iss3 >> word){
-        if (word == "ASCENDING")
-          vorders.push_back(CS_ASCENDING);
-        else if(word == "DESCENDING")
-          vorders.push_back(CS_DESCENDING);
-        else if(word == "UNKNOWN")
-          vorders.push_back(CS_UNKNOWN);
-        else if(word == "UNKNOWN")
-          vorders.push_back(CS_NO);
-      }
-
-      fin.close();
-    } else std::cout << "Unable to open file";
-  }
-  ~BaseTable(){}
-};
-
-inline std::ostream& operator<<(std::ostream& stream, const BaseTable& bt){
-  stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
-  for(int i = 0; i < bt.nbAttr; i++){
-    stream << i <<". " << bt.vnames[i] << " ";
-    if (bt.vtypes[i] == VT_INT)
-      stream << "INT ";
-    else
-      stream << "STR ";
-    if (bt.vorders[i] == CS_ASCENDING )
-      stream << "ASCENDING";
-    else if(bt.vorders[i] == CS_DESCENDING)
-      stream << "DESCENDING";
-    else if(bt.vorders[i] == CS_UNKNOWN)
-      stream << "UNKNOWN";
-    else if(bt.vorders[i] == CS_NO)
-      stream << "UNSORTED";
-    stream << std::endl;
-  }
-  return stream;
+            stream << "STR ";
+        if (bt.vorders[i] == CS_ASCENDING)
+            stream << "ASCENDING";
+        else if (bt.vorders[i] == CS_DESCENDING)
+            stream << "DESCENDING";
+        else if (bt.vorders[i] == CS_UNKNOWN)
+            stream << "UNKNOWN";
+        else if (bt.vorders[i] == CS_NO)
+            stream << "UNSORTED";
+        stream << std::endl;
+    }
+    return stream;
 }
 
 
-enum ErrCode{
-  EC_OK,
-  EC_FINISH,
-  EC_ERROR
+enum ErrCode {
+    EC_OK,
+    EC_FINISH,
+    EC_ERROR
 };
