@@ -35,12 +35,11 @@ PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
 }
 
 bool
-matches_predicates(const query_result_row &record, const vector<PredicateInfo> &predicates) {
+matches_predicates(const BaseTable& baseTable, const query_result_row &record, const vector<PredicateInfo> &predicates) {
   for (auto &predicate: predicates) {
-    if (!predicate.ToPredicate()->Apply(record)) {
+    if (!predicate.ToPredicate(baseTable)->Apply(record)) {
       return false;
     }
-
   }
 
   return true;
@@ -77,7 +76,7 @@ query_result PSelectNode::GetNextBlock() {
     while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
       current_position++;
       auto row = ParseRow(line);
-      if (matches_predicates(row, predicates)) {
+      if (matches_predicates(table, row, predicates)) {
         block.push_back(row);
       }
     }

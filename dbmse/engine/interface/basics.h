@@ -24,7 +24,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <bits/unique_ptr.h>
+#include <memory>
+#include "../utils/utils.h"
 
 
 const int MAXLEN = 1000;
@@ -163,51 +164,6 @@ private:
     Value value;
 };
 
-struct PredicateInfo {
-    PredicateType ptype;
-    std::string column_name;
-    int attribute;
-    Value value;
-
-    PredicateInfo(PredicateType ptype, std::string column_name, int attribute, Value v)
-        : ptype(ptype),
-          column_name(column_name),
-          attribute(attribute),
-          value(v) {}
-
-    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.column_name, p.attribute, p.value) {}
-
-    PredicateInfo() {}
-
-    ~PredicateInfo() {}
-
-    std::unique_ptr<Predicate> ToPredicate() const {
-        switch (ptype) {
-            case PT_GREATERTHAN:
-                return std::make_unique<GreaterThanPredicate>(attribute, value);
-            case PT_EQUALS:
-                return std::make_unique<EqualsPredicate>(attribute, value);
-        }
-
-        throw std::runtime_error("Unknown predicate type!");
-    }
-
-};
-
-inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {
-    stream << "[" << p.attribute << "]";
-    if (p.ptype == PT_EQUALS)
-        stream << " == ";
-    else
-        stream << " > ";
-
-    if (p.value.vtype == VT_INT)
-        stream << p.value.vint;
-    else
-        stream << p.value.vstr;
-    return stream;
-}
-
 struct BaseTable {
     std::string relpath;
     int nbAttr;
@@ -258,6 +214,55 @@ struct BaseTable {
 
     ~BaseTable() {}
 };
+
+struct PredicateInfo {
+    PredicateType ptype;
+    std::string column_name;
+    Value value;
+
+    PredicateInfo(PredicateType ptype, std::string column_name, Value v)
+        : ptype(ptype),
+          column_name(column_name),
+          value(v) {}
+
+    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.column_name, p.value) {}
+
+    PredicateInfo() {}
+
+    ~PredicateInfo() {}
+
+    std::unique_ptr<Predicate> ToPredicate(const BaseTable& baseTable) const {
+
+        size_t attribute = utils::find(baseTable.vnames, column_name);
+        if (attribute >= baseTable.vnames.size()) {
+            throw std::runtime_error("Cannot find attribute  +" + column_name + "!");
+        }
+
+        switch (ptype) {
+            case PT_GREATERTHAN:
+                return std::make_unique<GreaterThanPredicate>(attribute, value);
+            case PT_EQUALS:
+                return std::make_unique<EqualsPredicate>(attribute, value);
+        }
+
+        throw std::runtime_error("Unknown predicate type!");
+    }
+
+};
+
+inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {
+    stream << "[" << p.column_name << "]";
+    if (p.ptype == PT_EQUALS)
+        stream << " == ";
+    else
+        stream << " > ";
+
+    if (p.value.vtype == VT_INT)
+        stream << p.value.vint;
+    else
+        stream << p.value.vstr;
+    return stream;
+}
 
 inline std::ostream &operator<<(std::ostream &stream, const BaseTable &bt) {
     stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
