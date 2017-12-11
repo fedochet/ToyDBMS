@@ -165,15 +165,17 @@ private:
 
 struct PredicateInfo {
     PredicateType ptype;
+    std::string column_name;
     int attribute;
     Value value;
 
-    PredicateInfo(PredicateType ptype, int attribute, Value v)
+    PredicateInfo(PredicateType ptype, std::string column_name, int attribute, Value v)
         : ptype(ptype),
+          column_name(column_name),
           attribute(attribute),
           value(v) {}
 
-    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.attribute, p.value) {}
+    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.column_name, p.attribute, p.value) {}
 
     PredicateInfo() {}
 

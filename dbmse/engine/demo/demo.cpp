@@ -62,7 +62,7 @@ int main(){
     std::cout << bt1;
     std::cout << bt2;
     std::vector<PredicateInfo> predicates = {
-        PredicateInfo(PT_EQUALS, 1, Value("cero"))
+        PredicateInfo(PT_EQUALS, "table1.description", 1, Value("cero"))
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
     LAbstractNode* n2 = new LSelectNode(bt2, {});
@@ -83,7 +83,7 @@ int main(){
     std::cout << bt1;
     std::cout << bt2;
     std::vector<PredicateInfo> predicates = {
-        PredicateInfo(PT_EQUALS, 1, Value("cero"))
+        PredicateInfo(PT_EQUALS, "table1.description", 1, Value("cero"))
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
 //    LAbstractNode* n2 = new LSelectNode(bt2, {});
