@@ -5,15 +5,15 @@
 
 class LSelectNode : public LAbstractNode {
 public:
-    LSelectNode(BaseTable& table, std::vector<Predicate> predicates);
+    LSelectNode(BaseTable& table, std::vector<PredicateInfo> predicates);
     // returns a reference to BaseTable
     BaseTable& GetBaseTable();
     // returns end status and next predicate (if exists)
-    std::tuple<int, Predicate> GetNextPredicate();
+    std::tuple<int, PredicateInfo> GetNextPredicate();
     // resets predicate iterator
     void ResetIterator();
     ~LSelectNode();
-    std::vector<Predicate> predicates;
+    std::vector<PredicateInfo> predicates;
 private:
     size_t iteratorpos;
     BaseTable table;

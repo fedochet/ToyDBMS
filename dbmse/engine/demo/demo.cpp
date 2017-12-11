@@ -10,7 +10,7 @@
 // 0.3: added:
 //      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
-//      3) print methods for Predicate and BaseTable
+//      3) print methods for PredicateInfo and BaseTable
 //      updated:
 //      1) new format for data files: third line is the sort status now
 //      2) added projection code
@@ -61,8 +61,8 @@ int main(){
     BaseTable bt2 = BaseTable("table2");
     std::cout << bt1;
     std::cout << bt2;
-    std::vector<Predicate> predicates = {
-        Predicate(PT_EQUALS, VT_STRING, 1, 0, "cero")
+    std::vector<PredicateInfo> predicates = {
+        PredicateInfo(PT_EQUALS, VT_STRING, 1, 0, "cero")
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
     LAbstractNode* n2 = new LSelectNode(bt2, {});
@@ -82,8 +82,8 @@ int main(){
     BaseTable bt2 = BaseTable("table2");
     std::cout << bt1;
     std::cout << bt2;
-    std::vector<Predicate> predicates = {
-        Predicate(PT_EQUALS, VT_STRING, 1, 0, "cero")
+    std::vector<PredicateInfo> predicates = {
+        PredicateInfo(PT_EQUALS, VT_STRING, 1, 0, "cero")
     };
     LAbstractNode* n1 = new LSelectNode(bt1, predicates);
 //    LAbstractNode* n2 = new LSelectNode(bt2, {});

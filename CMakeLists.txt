@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 project(ToyDBMS)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 #for better times
 set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
 

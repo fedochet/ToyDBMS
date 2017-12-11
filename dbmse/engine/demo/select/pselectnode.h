@@ -10,7 +10,7 @@
 // 0.3: added:
 //      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
-//      3) print methods for Predicate and BaseTable
+//      3) print methods for PredicateInfo and BaseTable
 //      updated:
 //      1) new format for data files: third line is the sort status now
 //      2) added projection code
@@ -26,7 +26,7 @@
 class PSelectNode : public PGetNextNode{
   public:
     PSelectNode() = default;
-    PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
+    PSelectNode(LAbstractNode* p, std::vector<PredicateInfo> predicates);
     ~PSelectNode() override = default;
 
     // print node
@@ -36,7 +36,7 @@ class PSelectNode : public PGetNextNode{
 
 private:
     BaseTable table;
-    std::vector<Predicate> predicates;
+    std::vector<PredicateInfo> predicates;
     size_t pos;
 
     std::vector<Value> ParseRow(const std::string &line) const;

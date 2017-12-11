@@ -10,7 +10,7 @@
 // 0.3: added:
 //      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
-//      3) print methods for Predicate and BaseTable
+//      3) print methods for PredicateInfo and BaseTable
 //      updated:
 //      1) new format for data files: third line is the sort status now
 //      2) added projection code
@@ -24,6 +24,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <bits/unique_ptr.h>
 
 
 const int MAXLEN = 1000;
@@ -56,6 +57,10 @@ struct Value {
         vstr = v;
         vint = 0;
     }
+
+    Value(const Value &v) : Value(v.vtype, v.vint, v.vstr) {}
+
+    Value(ValueType vtype, int vint, std::string vstr) : vtype(vtype), vint(vint), vstr(vstr) {}
 
     Value() {
         vtype = VT_INT;
@@ -103,6 +108,18 @@ struct Value {
         throw std::runtime_error("Cannot get here!");
     }
 
+    bool operator>(const Value &right) const {
+        return right < *this;
+    }
+
+    bool operator>=(const Value &right) const {
+        return !(*this < right);
+    }
+
+    bool operator<=(const Value &right) const {
+        return !(*this > right);
+    }
+
 };
 
 typedef std::vector<Value> query_result_row;
@@ -117,27 +134,69 @@ enum PredicateType {
 };
 
 struct Predicate {
+    virtual bool Apply(const query_result_row &row) const = 0;
+};
+
+struct EqualsPredicate : Predicate {
+
+    EqualsPredicate(size_t attribute, const Value &value) : attribute(attribute), value(value) {}
+
+    bool Apply(const query_result_row &row) const override {
+        return row[attribute] == value;
+    }
+
+private:
+    size_t attribute;
+    Value value;
+};
+
+struct GreaterThanPredicate : Predicate {
+
+    GreaterThanPredicate(size_t attribute, const Value &value) : attribute(attribute), value(value) {}
+
+    bool Apply(const query_result_row &row) const override {
+        return row[attribute] >= value;
+    }
+
+private:
+    size_t attribute;
+    Value value;
+};
+
+struct PredicateInfo {
     PredicateType ptype;
     int attribute;
     ValueType vtype;
     int vint;
     std::string vstr;
 
-    Predicate(PredicateType ptype, ValueType vtype, int attribute, int vint, std::string vstr)
+    PredicateInfo(PredicateType ptype, ValueType vtype, int attribute, int vint, std::string vstr)
         : ptype(ptype),
           attribute(attribute),
           vtype(vtype),
           vint(vint),
           vstr(vstr) {}
 
-    Predicate(const Predicate &p): Predicate(p.ptype, p.vtype, p.attribute, p.vint, p.vstr) {}
+    PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.vtype, p.attribute, p.vint, p.vstr) {}
 
-    Predicate() {}
+    PredicateInfo() {}
 
-    ~Predicate() {}
+    ~PredicateInfo() {}
+
+    std::unique_ptr<Predicate> ToPredicate() const {
+        switch (ptype) {
+            case PT_GREATERTHAN:
+                return std::make_unique<GreaterThanPredicate>(attribute, Value(vtype, vint, vstr));
+            case PT_EQUALS:
+                return std::make_unique<EqualsPredicate>(attribute, Value(vtype, vint, vstr));
+        }
+
+        throw std::runtime_error("Unknown predicate type!");
+    }
+
 };
 
-inline std::ostream &operator<<(std::ostream &stream, const Predicate &p) {
+inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {
     stream << "[" << p.attribute << "]";
     if (p.ptype == PT_EQUALS)
         stream << " == ";

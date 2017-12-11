@@ -10,7 +10,7 @@
 // 0.3: added:
 //      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
-//      3) print methods for Predicate and BaseTable
+//      3) print methods for PredicateInfo and BaseTable
 //      updated:
 //      1) new format for data files: third line is the sort status now
 //      2) added projection code
@@ -29,7 +29,7 @@
 
 using namespace std;
 
-PSelectNode::PSelectNode(LAbstractNode* p, vector<Predicate> predicate)
+PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
 }
@@ -53,34 +53,21 @@ bool apply_comparison_predicate(const PredicateType &type, const T &original, co
 
 }
 
-bool apply_int_predicate(const Value &compared_attribute, const Predicate &predicate) {
+bool apply_int_predicate(const Value &compared_attribute, const PredicateInfo &predicate) {
   return apply_comparison_predicate(predicate.ptype, compared_attribute.vint, predicate.vint);
 }
 
-bool apply_string_predicate(const Value &compared_attribute, const Predicate &predicate) {
+bool apply_string_predicate(const Value &compared_attribute, const PredicateInfo &predicate) {
   return apply_comparison_predicate(predicate.ptype, compared_attribute.vstr, predicate.vstr);
 }
 
 bool
-matches_predicates(const BaseTable &table, const query_result_row &record, const vector<Predicate> &predicates) {
+matches_predicates(const query_result_row &record, const vector<PredicateInfo> &predicates) {
   for (auto &predicate: predicates) {
-    if (table.vtypes[predicate.attribute] == predicate.vtype) {
-      auto &compared_attribute = record[predicate.attribute];
-      switch (predicate.vtype) {
-        case VT_INT:
-          if (!apply_int_predicate(compared_attribute, predicate)) {
-            return false;
-          }
-          break;
-        case VT_STRING:
-          if (!apply_string_predicate(compared_attribute, predicate)) {
-            return false;
-          }
-          break;
-        default:
-          throw runtime_error("Could not match predicate type!");
-      }
+    if (!predicate.ToPredicate()->Apply(record)) {
+      return false;
     }
+
   }
 
   return true;
@@ -117,7 +104,7 @@ query_result PSelectNode::GetNextBlock() {
     while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
       current_position++;
       auto row = ParseRow(line);
-      if (matches_predicates(this->table, row, predicates)) {
+      if (matches_predicates(row, predicates)) {
         block.push_back(row);
       }
     }

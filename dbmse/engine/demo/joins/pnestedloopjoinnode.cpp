@@ -10,7 +10,7 @@
 // 0.3: added:
 //      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
-//      3) print methods for Predicate and BaseTable
+//      3) print methods for PredicateInfo and BaseTable
 //      updated:
 //      1) new format for data files: third line is the sort status now
 //      2) added projection code

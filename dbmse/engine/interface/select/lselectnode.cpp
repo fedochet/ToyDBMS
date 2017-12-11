@@ -3,7 +3,7 @@
 
 using namespace std;
 
-LSelectNode::LSelectNode(BaseTable &table, vector<Predicate> predicates)
+LSelectNode::LSelectNode(BaseTable &table, vector<PredicateInfo> predicates)
     : LAbstractNode(nullptr, nullptr), predicates(predicates), iteratorpos(0), table(table) {
   for (int i = 0; i < table.nbAttr; i++) {
     string tmp = table.relpath + "." + table.vnames[i];
@@ -19,9 +19,9 @@ BaseTable &LSelectNode::GetBaseTable() {
   return table;
 }
 
-tuple<int, Predicate> LSelectNode::GetNextPredicate() {
+tuple<int, PredicateInfo> LSelectNode::GetNextPredicate() {
   if (predicates.empty() || iteratorpos >= predicates.size()) {
-    return make_tuple(1, Predicate());
+    return make_tuple(1, PredicateInfo());
   }
   return make_tuple(0, predicates[iteratorpos++]);
 }

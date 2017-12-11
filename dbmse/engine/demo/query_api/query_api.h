@@ -15,7 +15,7 @@
 // Here be rewriter and optimizer
 PResultNode* QueryFactory(LAbstractNode* node){
   if (auto* selectNode = dynamic_cast<LSelectNode*>(node)){
-    std::vector<Predicate> p = selectNode->predicates;
+    std::vector<PredicateInfo> p = selectNode->predicates;
     return new PSelectNode(selectNode, p);
   }
 
