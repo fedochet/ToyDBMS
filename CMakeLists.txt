@@ -42,7 +42,8 @@ set(SOURCE_FILES
         dbmse/engine/interface/joins/lhashjoinnode.cpp
         dbmse/engine/interface/joins/lhashjoinnode.h
         dbmse/engine/demo/joins/phashjoinnode.cpp
-        dbmse/engine/demo/joins/phashjoinnode.h)
+        dbmse/engine/demo/joins/phashjoinnode.h
+        dbmse/engine/interface/histogram/histogram.h)
 
 add_library(ToyDB ${SOURCE_FILES})
 
@@ -51,3 +52,6 @@ target_link_libraries(demo ToyDB)
 
 add_executable(my_demo dbmse/engine/advanced_demo/advanced_demo.cpp)
 target_link_libraries(my_demo ToyDB)
+
+add_executable(histograms_test dbmse/engine/interface/histogram/histogram.cpp)
+target_link_libraries(histograms_test ToyDB)
