@@ -228,7 +228,7 @@ struct PredicateInfo {
         size_t attribute = utils::find(baseTable.vnames, column_name);
 
         if (attribute >= baseTable.vnames.size()) {
-            throw std::runtime_error("Cannot find attribute  +" + column_name + "!");
+            throw std::runtime_error("Cannot find attribute " + column_name + "!");
         }
 
         switch (ptype) {

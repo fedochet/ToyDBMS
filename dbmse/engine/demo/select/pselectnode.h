@@ -25,20 +25,16 @@
 
 class PSelectNode : public PGetNextNode{
   public:
-    PSelectNode() = default;
     PSelectNode(LAbstractNode* p, std::vector<PredicateInfo> predicates);
-    ~PSelectNode() override = default;
-
-    // print node
-    virtual void Print(size_t indent) override;
-
     query_result GetNextBlock() override;
+    void Print(size_t indent) override;
+
+private:
+    std::vector<Value> ParseRow(const std::string &line) const;
+    bool MatchesAllPredicates(const query_result_row &record) const;
 
 private:
     BaseTable table;
     std::vector<PredicateInfo> predicates;
     size_t pos;
-
-    std::vector<Value> ParseRow(const std::string &line) const;
-    bool MatchesAllPredicates(const query_result_row &record) const;
 };
