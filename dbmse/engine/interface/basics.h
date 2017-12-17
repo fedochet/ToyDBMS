@@ -234,6 +234,7 @@ struct PredicateInfo {
     std::unique_ptr<Predicate> ToPredicate(const BaseTable& baseTable) const {
 
         size_t attribute = utils::find(baseTable.vnames, column_name);
+
         if (attribute >= baseTable.vnames.size()) {
             throw std::runtime_error("Cannot find attribute  +" + column_name + "!");
         }

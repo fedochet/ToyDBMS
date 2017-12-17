@@ -40,4 +40,5 @@ private:
     size_t pos;
 
     std::vector<Value> ParseRow(const std::string &line) const;
+    bool MatchesAllPredicates(const query_result_row &record) const;
 };

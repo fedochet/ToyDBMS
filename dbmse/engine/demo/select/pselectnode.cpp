@@ -34,17 +34,6 @@ PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
       pos(0) {
 }
 
-bool
-matches_predicates(const BaseTable& baseTable, const query_result_row &record, const vector<PredicateInfo> &predicates) {
-  for (auto &predicate: predicates) {
-    if (!predicate.ToPredicate(baseTable)->Apply(record)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 void PSelectNode::Print(size_t indent) {
   for (size_t i = 0; i < indent; i++) {
     cout << " ";
@@ -76,7 +65,7 @@ query_result PSelectNode::GetNextBlock() {
     while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
       current_position++;
       auto row = ParseRow(line);
-      if (matches_predicates(table, row, predicates)) {
+      if (MatchesAllPredicates(table, row, predicates)) {
         block.push_back(row);
       }
     }
@@ -108,4 +97,15 @@ query_result_row PSelectNode::ParseRow(const string &line) const {
   }
   return tmp;
 }
+
+bool PSelectNode::MatchesAllPredicates(const query_result_row &record) const {
+    for (auto &predicate: predicates) {
+        if (!predicate.ToPredicate(table)->Apply(record)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
