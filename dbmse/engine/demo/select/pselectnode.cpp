@@ -65,7 +65,7 @@ query_result PSelectNode::GetNextBlock() {
     while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
       current_position++;
       auto row = ParseRow(line);
-      if (MatchesAllPredicates(table, row, predicates)) {
+      if (MatchesAllPredicates(row)) {
         block.push_back(row);
       }
     }

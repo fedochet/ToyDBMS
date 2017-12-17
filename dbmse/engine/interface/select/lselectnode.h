@@ -8,8 +8,6 @@ public:
     LSelectNode(BaseTable& table, std::vector<PredicateInfo> predicates);
     // returns a reference to BaseTable
     BaseTable& GetBaseTable();
-    // returns end status and next predicate (if exists)
-    std::tuple<int, PredicateInfo> GetNextPredicate();
     // resets predicate iterator
     void ResetIterator();
     ~LSelectNode();

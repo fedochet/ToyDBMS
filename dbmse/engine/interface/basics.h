@@ -216,20 +216,12 @@ struct BaseTable {
 };
 
 struct PredicateInfo {
-    PredicateType ptype;
-    std::string column_name;
-    Value value;
-
     PredicateInfo(PredicateType ptype, std::string column_name, Value v)
         : ptype(ptype),
           column_name(column_name),
           value(v) {}
 
     PredicateInfo(const PredicateInfo &p) : PredicateInfo(p.ptype, p.column_name, p.value) {}
-
-    PredicateInfo() {}
-
-    ~PredicateInfo() {}
 
     std::unique_ptr<Predicate> ToPredicate(const BaseTable& baseTable) const {
 
@@ -249,6 +241,12 @@ struct PredicateInfo {
         throw std::runtime_error("Unknown predicate type!");
     }
 
+private:
+    PredicateType ptype;
+    std::string column_name;
+    Value value;
+
+    friend inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p);
 };
 
 inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {

@@ -19,13 +19,6 @@ BaseTable &LSelectNode::GetBaseTable() {
   return table;
 }
 
-tuple<int, PredicateInfo> LSelectNode::GetNextPredicate() {
-  if (predicates.empty() || iteratorpos >= predicates.size()) {
-    return make_tuple(1, PredicateInfo());
-  }
-  return make_tuple(0, predicates[iteratorpos++]);
-}
-
 void LSelectNode::ResetIterator() {
   iteratorpos = 0;
 }
