@@ -24,7 +24,6 @@
 #include <sstream>
 
 #include "pselectnode.h"
-#include "../../utils/utils.h"
 #include "../../interface/select/lselectnode.h"
 
 using namespace std;
@@ -32,70 +31,71 @@ using namespace std;
 PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
+
 }
 
 void PSelectNode::Print(size_t indent) {
-  for (size_t i = 0; i < indent; i++) {
-    cout << " ";
-  }
+    for (size_t i = 0; i < indent; i++) {
+        cout << " ";
+    }
 
-  cout << "SCAN " << table.relpath << " with predicates ";
+    cout << "SCAN " << table.relpath << " with predicates ";
 
-  if (!predicates.empty()) {
-    cout << predicates[0];
-  } else {
-    cout << "NULL" << endl;
-  }
+    if (!predicates.empty()) {
+        cout << predicates[0];
+    } else {
+        cout << "NULL" << endl;
+    }
 
-  if (left) left->Print(indent + 2);
-  if (right) right->Print(indent + 2);
+    if (left) left->Print(indent + 2);
+    if (right) right->Print(indent + 2);
 }
 
 
 query_result PSelectNode::GetNextBlock() {
-  query_result block;
+    query_result block;
 
-  ifstream table_file(table.relpath);
-  if (table_file) {
-    // skipping first 4 lines
-    utils::skip_lines(table_file, 4);
-    utils::skip_lines(table_file, current_position);
+    ifstream table_file(table.relpath);
+    if (table_file) {
+        // skipping first 4 lines
+        utils::skip_lines(table_file, 4);
+        utils::skip_lines(table_file, current_position);
 
-    string line;
-    while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
-      current_position++;
-      auto row = ParseRow(line);
-      if (MatchesAllPredicates(row)) {
-        block.push_back(row);
-      }
+        string line;
+        while (block.size() < BLOCK_SIZE && getline(table_file, line)) {
+            current_position++;
+            auto row = ParseRow(line);
+            if (MatchesAllPredicates(row)) {
+                block.push_back(row);
+            }
+        }
+
+        table_file.close();
+    } else {
+        cout << "Unable to open file";
     }
 
-    table_file.close();
-  } else {
-    cout << "Unable to open file";
-  }
-
-  return block;
+    return block;
 
 }
 
 query_result_row PSelectNode::ParseRow(const string &line) const {
-  query_result_row tmp;
-  string word;
-  istringstream iss(line, ios_base::in);
-  int field_index = 0;
-  while (iss >> word) {
-    // Yeah, no predicates :) -- Homework
-    Value h;
-    if (prototype->fieldTypes[field_index] == VT_INT) {
-      h = Value(stoi(word));
-    } else {
-      h = Value(word);
+    query_result_row tmp;
+    string word;
+    istringstream iss(line, ios_base::in);
+    int field_index = 0;
+    while (iss >> word) {
+        // Yeah, no predicates :) -- Homework
+        Value h;
+        if (prototype->fieldTypes[field_index] == VT_INT) {
+            h = Value(stoi(word));
+        } else {
+            h = Value(word);
+        }
+        tmp.push_back(h);
+        field_index++;
     }
-    tmp.push_back(h);
-    field_index++;
-  }
-  return tmp;
+    return tmp;
 }
 
 bool PSelectNode::MatchesAllPredicates(const query_result_row &record) const {

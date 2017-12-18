@@ -22,19 +22,24 @@
 #include <vector>
 #include "../../interface/interface.h"
 #include "../pgetnextnode.h"
+#include "../../interface/histogram/histogram.h"
 
-class PSelectNode : public PGetNextNode{
-  public:
+class PSelectNode : public PGetNextNode {
+public:
     PSelectNode(LAbstractNode* p, std::vector<PredicateInfo> predicates);
+
     query_result GetNextBlock() override;
+
     void Print(size_t indent) override;
 
 private:
     std::vector<Value> ParseRow(const std::string &line) const;
+
     bool MatchesAllPredicates(const query_result_row &record) const;
 
 private:
     BaseTable table;
     std::vector<PredicateInfo> predicates;
     size_t pos;
+    std::map<std::string, Histogram<query_result>> histograms;
 };
