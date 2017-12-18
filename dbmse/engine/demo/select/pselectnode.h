@@ -41,5 +41,7 @@ private:
     BaseTable table;
     std::vector<PredicateInfo> predicates;
     size_t pos;
-    std::map<std::string, Histogram<query_result>> histograms;
+    std::map<std::string, Histogram<query_result_row>> histograms;
+
+    void ComputeHistogramForColumn(size_t column_pos);
 };

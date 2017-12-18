@@ -32,6 +32,9 @@ PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
 
+    for (size_t i = 0; i < table.vnames.size(); i++) {
+        ComputeHistogramForColumn(i);
+    }
 }
 
 void PSelectNode::Print(size_t indent) {
@@ -106,6 +109,21 @@ bool PSelectNode::MatchesAllPredicates(const query_result_row &record) const {
     }
 
     return true;
+}
+
+void PSelectNode::ComputeHistogramForColumn(size_t column_pos) {
+    string name = table.vnames[column_pos];
+
+    if (data.empty()) {
+        FetchResultTable();
+    }
+
+    auto histogram = Histogram<query_result_row>(data, [column_pos](auto& l, auto& r) {
+            return l[column_pos] <= r[column_pos];
+        }
+    );
+
+    histograms.emplace(make_pair(name, histogram));
 }
 
 

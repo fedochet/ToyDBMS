@@ -36,6 +36,8 @@ void PGetNextNode::FetchResultTable() {
     utils::append_to_back(data, next_block);
     next_block = GetNextBlock();
   }
+
+  Rewind();
 }
 
 size_t PGetNextNode::GetAttrNum() {
