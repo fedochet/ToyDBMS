@@ -5,13 +5,22 @@
 #include <functional>
 #include <iostream>
 
+struct Selectivity {
+    size_t lower_bound;
+    size_t upper_bound;
+    bool operator==(const Selectivity& other) {
+        return lower_bound == other.lower_bound
+               && upper_bound == other.upper_bound;
+    }
+};
+
 template<class T>
 struct Histogram {
     explicit Histogram(std::vector<T> data,
                        std::function<bool(const T &, const T &)> ascending_ordering = std::less_equal<T>(),
                        size_t number_of_buckets = 10);
 
-    std::pair<size_t, size_t> CountBelowValue(const T &val);
+    Selectivity CountBelowValue(const T &val);
 
 private:
 
@@ -68,21 +77,20 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
 }
 
 template<class T>
-std::pair<size_t, size_t> Histogram<T>::CountBelowValue(const T &val) {
+Selectivity Histogram<T>::CountBelowValue(const T &val) {
 
-
-    auto first_greater = std::find_if(std::begin(bucket_infos), std::end(bucket_infos), [&](BucketInfo& b) {
+    auto first_greater = std::find_if(std::begin(bucket_infos), std::end(bucket_infos), [&](BucketInfo &b) {
         return !ordering(b.val, val);
     });
 
     if (first_greater == std::begin(bucket_infos)) {
-        return std::make_pair(0, first_greater->count);
+        return Selectivity {0, first_greater->count};
     }
 
     if (first_greater == std::end(bucket_infos)) {
-        return std::make_pair(total_records, total_records);
+        return Selectivity {total_records, total_records};
     }
 
-    return std::make_pair((first_greater - 1)->count, first_greater->count);
+    return Selectivity {(first_greater - 1)->count, first_greater->count};
 
 }
