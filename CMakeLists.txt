@@ -42,7 +42,9 @@ set(SOURCE_FILES
         dbmse/engine/interface/joins/lhashjoinnode.cpp
         dbmse/engine/interface/joins/lhashjoinnode.h
         dbmse/engine/demo/joins/phashjoinnode.cpp
-        dbmse/engine/demo/joins/phashjoinnode.h)
+        dbmse/engine/demo/joins/phashjoinnode.h
+        dbmse/engine/demo/joins/pdoublepipelinedhashjoinnode.cpp
+        dbmse/engine/demo/joins/pdoublepipelinedhashjoinnode.h)
 
 add_library(ToyDB ${SOURCE_FILES})
 
