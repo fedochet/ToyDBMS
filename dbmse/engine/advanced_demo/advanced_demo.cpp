@@ -74,7 +74,7 @@ int main() {
     auto product_select = new LSelectNode(bt3, {});
 
     auto user_order_join = new LNestedLoopJoinNode(user_select, order_select, "USER.email", "ORDER.customer_email");
-    auto user_order_product_join = new LHashJoinNode(user_order_join, product_select, "ORDER.product_id", "PRODUCT.id");
+    auto user_order_product_join = new LFullHashJoin(user_order_join, product_select, "ORDER.product_id", "PRODUCT.id");
     auto projection = new LProjectNode(user_order_product_join, {"USER.firstname", "USER.lastname", "PRODUCT.name"});
     auto p_node = QueryFactory(projection);
 

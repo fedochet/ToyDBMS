@@ -33,7 +33,7 @@ PResultNode* QueryFactory(LAbstractNode* node){
     return new PSortMergeJoinNode(sortJoinNode, leftPNode, rightPNode);
   }
 
-  if (auto* hashJoinNode = dynamic_cast<LHashJoinNode*>(node)) {
+  if (auto* hashJoinNode = dynamic_cast<LFullHashJoin*>(node)) {
     auto* leftPNode = dynamic_cast<PGetNextNode*>(QueryFactory(hashJoinNode->GetLeft()));
     auto* rightPNode = dynamic_cast<PGetNextNode*>(QueryFactory(hashJoinNode->GetRight()));
 
