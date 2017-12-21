@@ -38,19 +38,12 @@ template<typename T>
 bool apply_comparison_predicate(const PredicateType &type, const T &original, const T &compare_to) {
   switch (type) {
     case PT_EQUALS:
-      if (original == compare_to) {
-        return true;
-      }
-      break;
+        return original == compare_to;
     case PT_GREATERTHAN:
-      if (original >= compare_to) {
-        return true;
-      }
-      break;
+        return original >= compare_to;
+      default:
+        throw runtime_error("Unknown comparison predicate!");
   }
-
-  return false;
-
 }
 
 bool apply_int_predicate(const Value &compared_attribute, const Predicate &predicate) {

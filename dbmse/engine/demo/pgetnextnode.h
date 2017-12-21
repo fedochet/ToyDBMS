@@ -22,7 +22,8 @@
 #include <vector>
 #include "../interface/interface.h"
 
-static const size_t BLOCK_SIZE = 4;
+// to speed up the compilation while testing
+extern const size_t BLOCK_SIZE;
 
 class PGetNextNode : public PResultNode {
   public:

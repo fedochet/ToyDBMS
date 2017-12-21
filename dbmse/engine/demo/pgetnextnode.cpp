@@ -24,6 +24,8 @@
 
 using namespace std;
 
+const size_t BLOCK_SIZE = 10;
+
 PGetNextNode::PGetNextNode(LAbstractNode* source, PResultNode* left, PResultNode* right)
     : PResultNode(left, right, source) {
 }

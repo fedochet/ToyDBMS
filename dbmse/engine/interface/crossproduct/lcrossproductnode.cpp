@@ -12,8 +12,3 @@ LCrossProductNode::LCrossProductNode(LAbstractNode* left, LAbstractNode* right)
   utils::append_to_back(fieldOrders, left->fieldOrders);
   fieldOrders.insert(std::end(fieldOrders), right->fieldOrders.size(), CS_UNKNOWN);
 }
-
-LCrossProductNode::~LCrossProductNode() {
-  delete left;
-  delete right;
-}
