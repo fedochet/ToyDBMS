@@ -4,6 +4,12 @@
 
 using namespace std;
 
+void PrintHeader(const string &header) {
+    cout << "==================================" << endl;
+    cout << header << endl;
+    cout << "==================================" << endl << endl;
+}
+
 int main() {
     {
         BaseTable bt1 = BaseTable("USER");
@@ -66,6 +72,8 @@ int main() {
     }
 
     {
+        PrintHeader("Fetching order names for users older then 23");
+
         BaseTable bt1 = BaseTable("USER");
         BaseTable bt2 = BaseTable("ORDER");
         BaseTable bt3 = BaseTable("PRODUCT");
@@ -74,10 +82,13 @@ int main() {
         auto product_select = new LSelectNode(bt3, {});
 
         auto user_order_join = new LNestedLoopJoinNode(user_select, order_select, "USER.email", "ORDER.customer_email");
-        auto user_order_product_join = new LFullHashJoin(user_order_join, product_select, "ORDER.product_id",
-                                                         "PRODUCT.id");
-        auto projection = new LProjectNode(user_order_product_join,
-                                           {"USER.firstname", "USER.lastname", "PRODUCT.name"});
+
+        auto user_order_product_join = new LFullHashJoin(
+            user_order_join, product_select, "ORDER.product_id", "PRODUCT.id");
+
+        auto projection = new LProjectNode(
+            user_order_product_join, {"USER.firstname", "USER.lastname", "PRODUCT.name"});
+
         auto p_node = QueryFactory(projection);
 
         p_node->Print(0);
@@ -90,7 +101,37 @@ int main() {
     }
 
     {
-        cout << "Simple sort merge join test" << endl;
+        PrintHeader("Same operation using double pipelined joins");
+
+        BaseTable bt1 = BaseTable("USER");
+        BaseTable bt2 = BaseTable("ORDER");
+        BaseTable bt3 = BaseTable("PRODUCT");
+        auto user_select = new LSelectNode(bt1, {Predicate(PT_GREATERTHAN, VT_INT, 4, 23, "")});
+        auto order_select = new LSelectNode(bt2, {});
+        auto product_select = new LSelectNode(bt3, {});
+
+        auto user_order_join = new LDoublePipelinedHashJoin(
+            user_select, order_select, "USER.email", "ORDER.customer_email");
+
+        auto user_order_product_join = new LDoublePipelinedHashJoin(
+            user_order_join, product_select, "ORDER.product_id", "PRODUCT.id");
+
+        auto projection = new LProjectNode(
+            user_order_product_join, {"USER.firstname", "USER.lastname", "PRODUCT.name"});
+
+        auto p_node = QueryFactory(projection);
+
+        p_node->Print(0);
+        ExecuteQuery(p_node);
+
+        delete projection;
+        delete p_node;
+
+        cout << endl;
+    }
+
+    {
+        PrintHeader("Simple sort merge join test");
 
         BaseTable bt1 = BaseTable("USER");
         BaseTable bt2 = BaseTable("PRODUCT");
@@ -110,7 +151,7 @@ int main() {
     }
 
     {
-        cout << "More advanced merge join test" << endl;
+        PrintHeader("More advanced merge join test");
 
         BaseTable bt1 = BaseTable("CITY");
         BaseTable bt2 = BaseTable("SIGHT");
@@ -130,7 +171,7 @@ int main() {
     }
 
     {
-        cout << "Even More advanced merge join test: each with each in one city" << endl;
+        PrintHeader("Even More advanced merge join test: each with each in one city");
 
         BaseTable bt1 = BaseTable("SIGHT");
         BaseTable bt2 = BaseTable("SIGHT");
