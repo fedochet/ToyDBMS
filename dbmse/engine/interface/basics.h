@@ -77,9 +77,9 @@ struct Value {
         return vint == right.vint;
       case VT_STRING:
         return vstr == right.vstr;
+      default:
+        throw std::runtime_error("Unknown vtyp!");
     }
-
-    throw std::runtime_error("Cannot get here!");
   }
 
   bool operator!=(const Value& right) const {
@@ -96,9 +96,9 @@ struct Value {
           return vint < right.vint;
         case VT_STRING:
           return vstr < right.vstr;
+        default:
+          throw std::runtime_error("Cannot get here!");
       }
-
-      throw std::runtime_error("Cannot get here!");
     }
 
 };
@@ -154,7 +154,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Predicate& p){
 
 struct BaseTable{
   std::string relpath;
-  int nbAttr;
+  size_t nbAttr;
   std::vector<ValueType> vtypes;
   std::vector<std::string> vnames;
   std::vector<COLUMN_SORT> vorders;
@@ -202,7 +202,7 @@ struct BaseTable{
 
 inline std::ostream& operator<<(std::ostream& stream, const BaseTable& bt){
   stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
-  for(int i = 0; i < bt.nbAttr; i++){
+  for (size_t i = 0; i < bt.nbAttr; i++){
     stream << i <<". " << bt.vnames[i] << " ";
     if (bt.vtypes[i] == VT_INT)
       stream << "INT ";

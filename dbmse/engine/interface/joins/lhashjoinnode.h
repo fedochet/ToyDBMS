@@ -11,7 +11,6 @@ struct LHashJoinNode : LAbstractJoinNode {
                   LAbstractNode* right,
                   const std::string &left_offset,
                   const std::string &right_offset);
-
 };
 
 template struct LHashJoinNode<FullHashJoin>;

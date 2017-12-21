@@ -27,7 +27,10 @@ LAbstractNode::LAbstractNode(LAbstractNode* left, LAbstractNode* right) {
   this->right = right;
 }
 
-LAbstractNode::~LAbstractNode() = default;
+LAbstractNode::~LAbstractNode() {
+  delete left;
+  delete right;
+}
 
 LAbstractNode* LAbstractNode::GetLeft() {
   return left;

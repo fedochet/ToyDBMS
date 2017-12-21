@@ -3,7 +3,30 @@ project(ToyDBMS)
 
 set(CMAKE_CXX_STANDARD 14)
 #for better times
-set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
+#set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
+
+set(CMAKE_CXX_FLAGS "\
+    -Werror\
+    -Wall\
+    -Wextra\
+    -Winit-self\
+    -Wold-style-cast\
+    -Woverloaded-virtual\
+    -Winit-self\
+    -pedantic-errors\
+    -Wuninitialized\
+    -Wuseless-cast\
+    -Woverloaded-virtual\
+    -Wnon-virtual-dtor\
+    -Wconversion\
+    -Wswitch-default\
+    -Wtrigraphs\
+    -Wlogical-op\
+    -Wfloat-equal\
+    -Wstrict-overflow=4\
+    -fsanitize=leak\
+    -fsanitize=undefined\
+")
 
 
 set(SOURCE_FILES
