@@ -35,12 +35,12 @@ class LAbstractNode{
     LAbstractNode* GetLeft();
     LAbstractNode* GetRight();
     // schema-related info
-    std::vector<std::vector<std::string>> fieldNames;
+    std::vector<name_aliases> fieldNames;
     std::vector<ValueType> fieldTypes;
     std::vector<COLUMN_SORT> fieldOrders;
   protected:
-    LAbstractNode* left;
-    LAbstractNode* right;
+    LAbstractNode* left {nullptr};
+    LAbstractNode* right {nullptr};
 };
 
 class LUniqueNode : public LAbstractNode{

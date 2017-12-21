@@ -3,7 +3,30 @@ project(ToyDBMS)
 
 set(CMAKE_CXX_STANDARD 17)
 #for better times
-set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
+#set(CMAKE_CXX_FLAGS "-Wall -Werror -Wextra -Winit-self -Wold-style-cast -Woverloaded-virtual -Wuninitialized -Winit-self -pedantic-errors")
+
+set(CMAKE_CXX_FLAGS "\
+    -Werror\
+    -Wall\
+    -Wextra\
+    -Winit-self\
+    -Wold-style-cast\
+    -Woverloaded-virtual\
+    -Winit-self\
+    -pedantic-errors\
+    -Wuninitialized\
+    -Wuseless-cast\
+    -Woverloaded-virtual\
+    -Wnon-virtual-dtor\
+    -Wconversion\
+    -Wswitch-default\
+    -Wtrigraphs\
+    -Wlogical-op\
+    -Wfloat-equal\
+    -Wstrict-overflow=4\
+    -fsanitize=leak\
+    -fsanitize=undefined\
+")
 
 
 set(SOURCE_FILES
@@ -42,6 +65,9 @@ set(SOURCE_FILES
         dbmse/engine/interface/joins/lhashjoinnode.cpp
         dbmse/engine/interface/joins/lhashjoinnode.h
         dbmse/engine/demo/joins/phashjoinnode.cpp
+        dbmse/engine/demo/joins/phashjoinnode.h
+        dbmse/engine/demo/joins/pdoublepipelinedhashjoinnode.cpp
+        dbmse/engine/demo/joins/pdoublepipelinedhashjoinnode.h
         dbmse/engine/demo/joins/phashjoinnode.h
         dbmse/engine/interface/histogram/histogram.h)
 

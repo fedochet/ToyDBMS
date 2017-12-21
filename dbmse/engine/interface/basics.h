@@ -80,15 +80,15 @@ struct Value {
             throw std::runtime_error("Cannot compare Values of different types!");
         }
 
-        switch (vtype) {
-            case VT_INT:
-                return vint == right.vint;
-            case VT_STRING:
-                return vstr == right.vstr;
-        }
-
-        throw std::runtime_error("Cannot get here!");
+    switch (vtype) {
+      case VT_INT:
+        return vint == right.vint;
+      case VT_STRING:
+        return vstr == right.vstr;
+      default:
+        throw std::runtime_error("Unknown vtyp!");
     }
+  }
 
     bool operator!=(const Value &right) const {
         return !(*this == right);
@@ -99,14 +99,14 @@ struct Value {
             throw std::runtime_error("Cannot compare Values of different types!");
         }
 
-        switch (vtype) {
-            case VT_INT:
-                return vint < right.vint;
-            case VT_STRING:
-                return vstr < right.vstr;
-        }
-
-        throw std::runtime_error("Cannot get here!");
+      switch (vtype) {
+        case VT_INT:
+          return vint < right.vint;
+        case VT_STRING:
+          return vstr < right.vstr;
+        default:
+          throw std::runtime_error("Cannot get here!");
+      }
     }
 
     bool operator>(const Value &right) const {
@@ -164,49 +164,47 @@ private:
     Value value;
 };
 
-struct BaseTable {
-    std::string relpath;
-    int nbAttr;
-    std::vector<ValueType> vtypes;
-    std::vector<std::string> vnames;
-    std::vector<COLUMN_SORT> vorders;
-
-    BaseTable() {}
-
-    BaseTable(std::string p) : relpath(p) {
-        std::string line, word;
-        std::ifstream fin(relpath.c_str());
-        if (fin.is_open()) {
-            fin >> nbAttr;
-            // names
-            getline(fin, line);
-            getline(fin, line);
-            std::istringstream iss(line, std::istringstream::in);
-            while (iss >> word) {
-                vnames.push_back(word);
-            }
-            // types
-            getline(fin, line);
-            std::istringstream iss2(line, std::istringstream::in);
-            while (iss2 >> word) {
-                if (word == "INT")
-                    vtypes.push_back(VT_INT);
-                else
-                    vtypes.push_back(VT_STRING);
-            }
-            // order
-            getline(fin, line);
-            std::istringstream iss3(line, std::istringstream::in);
-            while (iss3 >> word) {
-                if (word == "ASCENDING")
-                    vorders.push_back(CS_ASCENDING);
-                else if (word == "DESCENDING")
-                    vorders.push_back(CS_DESCENDING);
-                else if (word == "UNKNOWN")
-                    vorders.push_back(CS_UNKNOWN);
-                else if (word == "UNKNOWN")
-                    vorders.push_back(CS_NO);
-            }
+struct BaseTable{
+  std::string relpath;
+  size_t nbAttr;
+  std::vector<ValueType> vtypes;
+  std::vector<std::string> vnames;
+  std::vector<COLUMN_SORT> vorders;
+  BaseTable(){}
+  BaseTable(std::string p): relpath(p){
+    std::string line, word;
+    std::ifstream fin(relpath.c_str());
+    if (fin.is_open()){
+      fin >> nbAttr;
+      // names
+      getline(fin, line);
+      getline(fin, line);
+      std::istringstream iss(line, std::istringstream::in);
+      while (iss >> word){
+        vnames.push_back(word);
+      }
+      // types
+      getline(fin, line);
+      std::istringstream iss2(line, std::istringstream::in);
+      while (iss2 >> word){
+        if (word == "INT")
+          vtypes.push_back(VT_INT);
+        else
+          vtypes.push_back(VT_STRING);
+      }
+      // order
+      getline(fin, line);
+      std::istringstream iss3(line, std::istringstream::in);
+      while (iss3 >> word){
+        if (word == "ASCENDING")
+          vorders.push_back(CS_ASCENDING);
+        else if(word == "DESCENDING")
+          vorders.push_back(CS_DESCENDING);
+        else if(word == "UNKNOWN")
+          vorders.push_back(CS_UNKNOWN);
+        else if(word == "UNKNOWN")
+          vorders.push_back(CS_NO);
+      }
 
             fin.close();
         } else std::cout << "Unable to open file";
@@ -265,7 +263,7 @@ inline std::ostream &operator<<(std::ostream &stream, const PredicateInfo &p) {
 
 inline std::ostream &operator<<(std::ostream &stream, const BaseTable &bt) {
     stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
-    for (int i = 0; i < bt.nbAttr; i++) {
+    for (size_t i = 0; i < bt.nbAttr; i++) {
         stream << i << ". " << bt.vnames[i] << " ";
         if (bt.vtypes[i] == VT_INT)
             stream << "INT ";

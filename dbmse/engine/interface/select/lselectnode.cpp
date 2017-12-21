@@ -5,7 +5,7 @@ using namespace std;
 
 LSelectNode::LSelectNode(BaseTable &table, vector<PredicateInfo> predicates)
     : LAbstractNode(nullptr, nullptr), predicates(predicates), iteratorpos(0), table(table) {
-  for (int i = 0; i < table.nbAttr; i++) {
+  for (size_t i = 0; i < table.nbAttr; i++) {
     string tmp = table.relpath + "." + table.vnames[i];
     vector<string> tmp2;
     tmp2.push_back(tmp);

@@ -22,12 +22,12 @@
 #include "interface.h"
 #include "../utils/utils.h"
 
-LAbstractNode::LAbstractNode(LAbstractNode* left, LAbstractNode* right) {
-  this->left = left;
-  this->right = right;
-}
+LAbstractNode::LAbstractNode(LAbstractNode* left, LAbstractNode* right) : left(left), right(right) {}
 
-LAbstractNode::~LAbstractNode() = default;
+LAbstractNode::~LAbstractNode() {
+  delete left;
+  delete right;
+}
 
 LAbstractNode* LAbstractNode::GetLeft() {
   return left;
@@ -38,8 +38,7 @@ LAbstractNode* LAbstractNode::GetRight() {
 }
 
 
-LUniqueNode::LUniqueNode(LAbstractNode* child) : LAbstractNode(child, NULL) {
-}
+LUniqueNode::LUniqueNode(LAbstractNode* child) : LAbstractNode(child, nullptr) {}
 
 LUniqueNode::~LUniqueNode() = default;
 
