@@ -54,10 +54,10 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
     }
 
     std::sort(std::begin(data), std::end(data), ordering);
-    double records_per_bucket = data.size() / static_cast<double> (number_of_buckets);
+    double records_per_bucket = static_cast<double>(data.size()) / static_cast<double>(number_of_buckets);
 
     for (size_t i = 0; i < total_records; i++) {
-        auto bucket_number = static_cast<size_t> ((i + 1) / records_per_bucket) - 1;
+        auto bucket_number = static_cast<size_t> (static_cast<double>(i + 1) / records_per_bucket) - 1;
         buckets.at(bucket_number).push_back(data.at(i));
     }
 

@@ -77,7 +77,7 @@ int main() {
         BaseTable bt1 = BaseTable("USER");
         BaseTable bt2 = BaseTable("ORDER");
         BaseTable bt3 = BaseTable("PRODUCT");
-        auto user_select = new LSelectNode(bt1, {Predicate(PT_GREATERTHAN, VT_INT, 4, 23, "")});
+        auto user_select = new LSelectNode(bt1, {PredicateInfo(PT_GREATERTHAN, "age", 23)});
         auto order_select = new LSelectNode(bt2, {});
         auto product_select = new LSelectNode(bt3, {});
 
@@ -106,7 +106,7 @@ int main() {
         BaseTable bt1 = BaseTable("USER");
         BaseTable bt2 = BaseTable("ORDER");
         BaseTable bt3 = BaseTable("PRODUCT");
-        auto user_select = new LSelectNode(bt1, {Predicate(PT_GREATERTHAN, VT_INT, 4, 23, "")});
+        auto user_select = new LSelectNode(bt1, {PredicateInfo(PT_GREATERTHAN, "age", 23)});
         auto order_select = new LSelectNode(bt2, {});
         auto product_select = new LSelectNode(bt3, {});
 

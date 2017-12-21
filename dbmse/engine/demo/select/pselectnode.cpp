@@ -32,9 +32,9 @@ PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
 
-    for (size_t i = 0; i < table.vnames.size(); i++) {
-        ComputeHistogramForColumn(i);
-    }
+//    for (size_t i = 0; i < table.vnames.size(); i++) {
+//        ComputeHistogramForColumn(i);
+//    }
 }
 
 void PSelectNode::Print(size_t indent) {

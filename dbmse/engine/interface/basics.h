@@ -136,6 +136,7 @@ enum PredicateType {
 
 struct Predicate {
     virtual bool Apply(const query_result_row &row) const = 0;
+    virtual ~Predicate() = default;
 };
 
 struct EqualsPredicate : Predicate {
@@ -234,9 +235,9 @@ struct PredicateInfo {
                 return std::make_unique<GreaterThanPredicate>(attribute, value);
             case PT_EQUALS:
                 return std::make_unique<EqualsPredicate>(attribute, value);
+            default:
+                throw std::runtime_error("Unknown predicate type!");
         }
-
-        throw std::runtime_error("Unknown predicate type!");
     }
 
 private:
