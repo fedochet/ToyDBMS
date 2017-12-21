@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <map>
 #include "../pgetnextnode.h"
 #include "../../interface/joins/lhashjoinnode.h"
@@ -32,6 +31,5 @@ private:
     std::map<Value, query_result> right_hash_table;
 
     bool from_left{true};
-    size_t right_block_pos{0};
-    size_t left_block_pos{0};
+    size_t hash_table_block_pos{0};
 };
