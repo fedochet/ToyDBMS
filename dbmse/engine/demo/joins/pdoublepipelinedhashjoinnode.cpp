@@ -54,6 +54,38 @@ query_result PDoublePipelinedHashJoinNode::GetNextBlock() {
         }
     }
 
+    while (result.size() < BLOCK_SIZE && !left_iterator.Closed()) {
+        auto& current_row = *left_iterator;
+        auto& current_block = right_hash_table[current_row[left_join_offset.first]];
+
+        if (hash_table_block_pos >= current_block.size()) {
+            ++left_iterator;
+            hash_table_block_pos = 0;
+            continue;
+        }
+
+        while (result.size() < BLOCK_SIZE && hash_table_block_pos < current_block.size()) {
+            result.push_back(merger.MergeRows(current_row, current_block[hash_table_block_pos]));
+            hash_table_block_pos++;
+        }
+    }
+
+    while (result.size() < BLOCK_SIZE && !right_iterator.Closed()) {
+        auto& current_row = *right_iterator;
+        auto& current_block = left_hash_table[current_row[right_join_offset.first]];
+
+        if (hash_table_block_pos >= current_block.size()) {
+            ++right_iterator;
+            hash_table_block_pos = 0;
+            continue;
+        }
+
+        while (result.size() < BLOCK_SIZE && hash_table_block_pos < current_block.size()) {
+            result.push_back(merger.MergeRows(current_block[hash_table_block_pos], current_row));
+            hash_table_block_pos++;
+        }
+    }
+
     return result;
 }
 
