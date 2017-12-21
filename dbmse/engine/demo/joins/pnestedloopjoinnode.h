@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -16,27 +16,34 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
-
-#ifndef PSELECTNODE_H
-#define PSELECTNODE_H
+#pragma once
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
+#include "../../utils/bd_utils.h"
+#include "../../interface/joins/lnestedloopjoinnode.h"
+#include "joinutils.h"
 
-class PSelectNode : public PGetNextNode{
-  public:
-    PSelectNode() = default;
-    PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
-    ~PSelectNode() override = default;
-    std::vector<std::vector<Value>> GetNext() override;
-    void Initialize() override;
-    // print node
-    virtual void Print(int indent) override;
-  private:
-    BaseTable table;
-    std::vector<Predicate> predicates;
-    int pos;
+class PNestedLoopJoinNode : public PGetNextNode {
+public:
+    PNestedLoopJoinNode(LNestedLoopJoinNode* p, PGetNextNode* left, PGetNextNode* right);
+
+    ~PNestedLoopJoinNode();
+
+    void Print(size_t indent) override;
+
+    query_result GetNextBlock() override;
+
+    void Rewind() override;
+
+    size_t GetAttrNum() override;
+
+private:
+    utils::TableRowMerger merger;
+    utils::BlockIterator left_iterator;
+    utils::BlockIterator right_iterator;
+
+    size_t left_join_offset;
+    size_t right_join_offset;
 };
-
-#endif // PSELECTNODE_H

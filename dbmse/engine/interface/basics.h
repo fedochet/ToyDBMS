@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -17,10 +17,8 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef BASICS_H
-#define BASICS_H
+#pragma once
 
-#include <string.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -42,7 +40,7 @@ enum COLUMN_SORT{
     CS_UNKNOWN
 };
 
-struct Value{
+struct Value {
   ValueType vtype;
   int vint;
   std::string vstr;
@@ -52,20 +50,64 @@ struct Value{
     vint = v;
     vstr = "";
   }
+
   Value(std::string v){
     vtype = VT_STRING;
     vstr = v;
+    vint = 0;
   }
+
   Value(){
     vtype = VT_INT;
     vint = 0;
     vstr = "";
   }
-  operator int() const {return vint;}
-  operator std::string() const {return vstr;}
-  ~Value(){
+
+  explicit operator int() const {return vint;}
+  explicit operator std::string() const {return vstr;}
+  ~Value() = default;
+
+  bool operator==(const Value& right) const {
+    if (vtype != right.vtype) {
+      throw std::runtime_error("Cannot compare Values of different types!");
+    }
+
+    switch (vtype) {
+      case VT_INT:
+        return vint == right.vint;
+      case VT_STRING:
+        return vstr == right.vstr;
+      default:
+        throw std::runtime_error("Unknown vtyp!");
+    }
   }
+
+  bool operator!=(const Value& right) const {
+    return !(*this == right);
+  }
+
+    bool operator<(const Value& right) const {
+      if (vtype != right.vtype) {
+        throw std::runtime_error("Cannot compare Values of different types!");
+      }
+
+      switch (vtype) {
+        case VT_INT:
+          return vint < right.vint;
+        case VT_STRING:
+          return vstr < right.vstr;
+        default:
+          throw std::runtime_error("Cannot get here!");
+      }
+    }
+
 };
+
+typedef std::vector<Value> query_result_row;
+typedef std::vector<query_result_row> query_result;
+
+typedef std::vector<std::string> name_aliases;
+typedef std::pair<size_t, std::string> join_offset;
 
 enum PredicateType{
   PT_EQUALS,
@@ -101,7 +143,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Predicate& p){
   if (p.ptype == PT_EQUALS)
     stream << " == ";
   else
-    stream << " < ";
+    stream << " > ";
 
   if(p.vtype == VT_INT)
       stream << p.vint;
@@ -112,7 +154,7 @@ inline std::ostream& operator<<(std::ostream& stream, const Predicate& p){
 
 struct BaseTable{
   std::string relpath;
-  int nbAttr;
+  size_t nbAttr;
   std::vector<ValueType> vtypes;
   std::vector<std::string> vnames;
   std::vector<COLUMN_SORT> vorders;
@@ -160,7 +202,7 @@ struct BaseTable{
 
 inline std::ostream& operator<<(std::ostream& stream, const BaseTable& bt){
   stream << "located in " << bt.relpath << " having " << bt.nbAttr << " following attributes:" << std::endl;
-  for(int i = 0; i < bt.nbAttr; i++){
+  for (size_t i = 0; i < bt.nbAttr; i++){
     stream << i <<". " << bt.vnames[i] << " ";
     if (bt.vtypes[i] == VT_INT)
       stream << "INT ";
@@ -185,5 +227,3 @@ enum ErrCode{
   EC_FINISH,
   EC_ERROR
 };
-
-#endif // BASICS_H

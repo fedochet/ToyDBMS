@@ -1,0 +1,7 @@
+4
+id firstname lastname email age
+INT STRING STRING STRING INT
+ASCENDING UNKNOWN UNKNOWN UNKNOWN UNKNOWN
+0 Roman     Golyshev    anstreth@gmail.com  22
+1 Andrey    Chuprin     andrey@ya.ru        23
+2 John      Dou         john_dou@gmail.com  35

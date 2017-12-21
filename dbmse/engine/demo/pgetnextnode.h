@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -17,25 +17,27 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PGETNEXTNODE_H
-#define PGETNEXTNODE_H
+#pragma once
+
 #include <vector>
 #include "../interface/interface.h"
 
-class PGetNextNode : public PResultNode{
+// to speed up the compilation while testing
+extern const size_t BLOCK_SIZE;
+
+class PGetNextNode : public PResultNode {
   public:
-    PGetNextNode();
-    PGetNextNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
+    explicit PGetNextNode(LAbstractNode* p, PResultNode* left, PResultNode* right);
     // internal way to transfer data
-    virtual std::vector<std::vector<Value>> GetNext();
-    // getting access to data
-    virtual void Initialize();
+    virtual query_result GetNextBlock();
+    virtual void Rewind();
+
     // get number of attributes
-    virtual int GetAttrNum();
-  protected:
+    size_t GetAttrNum() override;
+    // returns error status and data, if possible
+    std::tuple<ErrCode, query_result_row> GetRecord() override;
 
-  private:
-
+protected:
+    void FetchResultTable();
+    size_t current_position{0};
 };
-
-#endif // PGETNEXTNODE_H

@@ -1,0 +1,4 @@
+cmake-build-debug/
+table*
+test.sh
+*result.txt

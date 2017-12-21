@@ -1,0 +1,8 @@
+3
+id customer_email product_id
+INT STRING INT
+ASCENDING UNKNOWN UNKNOWN
+0 anstreth@gmail.com  1
+1 andrey@ya.ru        2
+2 john_dou@gmail.com  1
+3 andrey@ya.ru        0

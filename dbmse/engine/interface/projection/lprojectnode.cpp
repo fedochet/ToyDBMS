@@ -1,5 +1,5 @@
-#include "interface.h"
-#include "../utils/utils.h"
+#include "../../utils/utils.h"
+#include "lprojectnode.h"
 
 // offsets to keep
 LProjectNode::LProjectNode(LAbstractNode* child, std::vector<std::string> tokeep)
@@ -18,7 +18,3 @@ LProjectNode::LProjectNode(LAbstractNode* child, std::vector<std::string> tokeep
   }
 
 }
-
-LProjectNode::~LProjectNode() {
-  delete left;
-};

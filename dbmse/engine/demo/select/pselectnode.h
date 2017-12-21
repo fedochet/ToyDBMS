@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -17,22 +17,27 @@
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
 
-#ifndef PJOINNODE_H
-#define PJOINNODE_H
+#pragma once
 
 #include <vector>
-#include "../interface/interface.h"
-#include "pgetnextnode.h"
+#include "../../interface/interface.h"
+#include "../pgetnextnode.h"
 
-class PJoinNode : public PGetNextNode{
+class PSelectNode : public PGetNextNode{
   public:
-    PJoinNode(PGetNextNode* left, PGetNextNode* right, LAbstractNode* p);
-    ~PJoinNode();
-    virtual std::vector<std::vector<Value>> GetNext();
-    virtual void Initialize();
-    virtual void Print(int indent);
-  private:
-    int pos;
-};
+    PSelectNode() = default;
+    PSelectNode(LAbstractNode* p, std::vector<Predicate> predicates);
+    ~PSelectNode() override = default;
 
-#endif // PJOINNODE_H
+    // print node
+    virtual void Print(size_t indent) override;
+
+    query_result GetNextBlock() override;
+
+private:
+    BaseTable table;
+    std::vector<Predicate> predicates;
+    size_t pos;
+
+    std::vector<Value> ParseRow(const std::string &line) const;
+};

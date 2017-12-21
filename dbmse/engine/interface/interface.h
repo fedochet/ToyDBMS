@@ -8,7 +8,7 @@
 //      2) implemented support for multiple attributes in the DBMS
 //      3) code clean-up and restructurization
 // 0.3: added:
-//      1) support for restricting physical join node size
+//      1) support for restricting physical joins node size
 //      2) support for deduplication node, LUniqueNode
 //      3) print methods for Predicate and BaseTable
 //      updated:
@@ -16,10 +16,8 @@
 //      2) added projection code
 //      3) contract contains print methods for physical and logical nodes
 // 0.2: first public release
+#pragma once
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
-#include <string.h>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -37,55 +35,12 @@ class LAbstractNode{
     LAbstractNode* GetLeft();
     LAbstractNode* GetRight();
     // schema-related info
-    std::vector<std::vector<std::string>> fieldNames;
+    std::vector<name_aliases> fieldNames;
     std::vector<ValueType> fieldTypes;
     std::vector<COLUMN_SORT> fieldOrders;
   protected:
-    LAbstractNode* left;
-    LAbstractNode* rigth;
-};
-
-class LCrossProductNode : public LAbstractNode{
-  public:
-    LCrossProductNode(LAbstractNode* left, LAbstractNode* right);
-    ~LCrossProductNode() override;
-};
-
-class LJoinNode : public LAbstractNode{
-  public:
-    // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    LJoinNode(LAbstractNode* left, LAbstractNode* right, std::string offset1, std::string offset2, int memorylimit);
-    ~LJoinNode();
-    // attributes to perform equi-join on
-    std::string offset1, offset2;
-    // maximum number of records permitted to present inside physical node
-    int memorylimit;
-};
-
-class LProjectNode : public LAbstractNode{
-  public:
-    // offsets to keep
-    LProjectNode(LAbstractNode* child, std::vector<std::string> tokeep);
-    ~LProjectNode();
-
-    // offsets are defined as "TableName.AttributeName" so, ensure there is no duplicates
-    std::vector<size_t> offsets;
-};
-
-class LSelectNode : public LAbstractNode{
-  public:
-    LSelectNode(BaseTable& table, std::vector<Predicate> predicates);
-    // returns a reference to BaseTable
-    BaseTable& GetBaseTable();
-    // returns end status and next predicate (if exists)
-    std::tuple<int, Predicate> GetNextPredicate();
-    // resets predicate iterator
-    void ResetIterator();
-    ~LSelectNode();
-    std::vector<Predicate> predicates;
-private:
-    int iteratorpos;
-    BaseTable table;
+    LAbstractNode* left {nullptr};
+    LAbstractNode* right {nullptr};
 };
 
 class LUniqueNode : public LAbstractNode{
@@ -96,23 +51,25 @@ class LUniqueNode : public LAbstractNode{
 
 // Physical node interface (result), should be used for automatic testing
 
-class PResultNode{
-  public:
+class PResultNode {
+
+public:
     PResultNode(PResultNode* left, PResultNode* right, LAbstractNode* p);
     virtual ~PResultNode();
     // returns number of attributes
-    virtual int GetAttrNum() = 0;
+    virtual size_t GetAttrNum() = 0;
     // prints tree
-    virtual void Print(int indent) = 0;
+    virtual void Print(size_t indent) = 0;
     // used to get attribute info
     LAbstractNode* prototype;
     // returns error status and data, if possible
-    virtual std::tuple<ErrCode, std::vector<Value>> GetRecord();
-  protected:
+    virtual std::tuple<ErrCode, query_result_row> GetRecord();
+
+protected:
     PResultNode* left;
     PResultNode* right;
-    std::vector<std::vector<Value>> data;
-    int pos;
-};
+    query_result data;
 
-#endif // INTERFACE_H
+private:
+    size_t record_position;
+};
