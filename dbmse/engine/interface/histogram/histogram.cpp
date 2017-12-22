@@ -31,7 +31,19 @@ void test_histograms() {
     assert((h.CountBelowValue(110) == Selectivity {10, 10}));
 }
 
+void test_predicates_matching() {
+    vector<int> data = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    Histogram<int> h(data);
+
+    cout << h.MatchingPredicate([](auto& i) { return i == 40;}) << endl;
+}
+
+
+template class Histogram<int>;
+
 int main() {
     test_histograms();
+    test_predicates_matching();
+
     return 0;
 }
