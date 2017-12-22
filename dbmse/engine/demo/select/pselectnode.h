@@ -32,6 +32,10 @@ public:
 
     void Print(size_t indent) override;
 
+    void ComputeHistograms();
+
+    void PrintPredicateSelectivity(const PredicateInfo &p_info);
+
 private:
     std::vector<Value> ParseRow(const std::string &line) const;
 

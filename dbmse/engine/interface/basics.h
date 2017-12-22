@@ -240,7 +240,6 @@ struct PredicateInfo {
         }
     }
 
-private:
     PredicateType ptype;
     std::string column_name;
     Value value;

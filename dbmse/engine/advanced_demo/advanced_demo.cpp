@@ -190,5 +190,19 @@ int main() {
         cout << endl;
     }
 
+    {
+        PrintHeader("Checking Predicates Selectivity Info");
+
+        BaseTable bt1 = BaseTable("SIGHT");
+        auto select = new LSelectNode(bt1, {});
+        PSelectNode* node = dynamic_cast<PSelectNode*>(QueryFactory(select));
+
+        node->ComputeHistograms();
+        node->PrintPredicateSelectivity(PredicateInfo(PT_EQUALS, "city_name", Value("new-york")));
+
+        delete node;
+        delete select;
+    }
+
     return 0;
 }

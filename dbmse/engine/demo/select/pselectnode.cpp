@@ -31,10 +31,6 @@ using namespace std;
 PSelectNode::PSelectNode(LAbstractNode* p, vector<PredicateInfo> predicate)
     : PGetNextNode(p, nullptr, nullptr), table(dynamic_cast<LSelectNode*>(p)->GetBaseTable()), predicates(predicate),
       pos(0) {
-
-//    for (size_t i = 0; i < table.vnames.size(); i++) {
-//        ComputeHistogramForColumn(i);
-//    }
 }
 
 void PSelectNode::Print(size_t indent) {
@@ -54,6 +50,12 @@ void PSelectNode::Print(size_t indent) {
     if (right) right->Print(indent + 2);
 }
 
+
+void PSelectNode::ComputeHistograms() {
+    for (size_t i = 0; i < table.vnames.size(); i++) {
+        ComputeHistogramForColumn(i);
+    }
+}
 
 query_result PSelectNode::GetNextBlock() {
     query_result block;
@@ -119,11 +121,17 @@ void PSelectNode::ComputeHistogramForColumn(size_t column_pos) {
     }
 
     auto histogram = Histogram<query_result_row>(data, [column_pos](auto& l, auto& r) {
-            return l[column_pos] <= r[column_pos];
-        }
+            return l[column_pos] < r[column_pos];
+        }, 10
     );
 
     histograms.emplace(make_pair(name, histogram));
+}
+
+void PSelectNode::PrintPredicateSelectivity(const PredicateInfo &p_info) {
+    auto row = query_result_row(GetAttrNum(), p_info.value);
+    const Statistics &statistics = histograms.at(p_info.column_name).CountStatisticsFor(row);
+    std::cout << statistics << std::endl;
 }
 
 
