@@ -5,15 +5,6 @@
 #include <functional>
 #include <iostream>
 
-struct Selectivity {
-    size_t lower_bound;
-    size_t upper_bound;
-    bool operator==(const Selectivity& other) {
-        return lower_bound == other.lower_bound
-               && upper_bound == other.upper_bound;
-    }
-};
-
 struct Statistics {
     size_t less_than;
     size_t greater_than;
@@ -35,16 +26,13 @@ struct Histogram {
                        std::function<bool(const T &, const T &)> ascending_ordering = std::less<T>(),
                        size_t number_of_buckets = 10);
 
-    Selectivity CountBelowValue(const T &val);
     Statistics CountStatisticsFor(const T &val) const;
-    size_t MatchingPredicate(std::function<bool(const T&)> predicate) const;
 
 private:
 
     struct BucketInfo {
         T left_val;
         T right_val;
-        size_t count;
         size_t in_bucket;
     };
 
@@ -60,12 +48,8 @@ private:
         return less(left, right) || equal(left, right);
     }
 
-    bool greater(const T& left, const T& right) const {
-        return less_predicate(right, left);
-    }
-
     bool equal(const T& left, const T& right) const {
-        return !less(left, right) && !greater(left, right);
+        return !less(left, right) && !less(right, left);
     }
 
 };
@@ -103,55 +87,9 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
 
     for (Bucket &b: buckets) {
         size_t previous_count = b.size();
-
-        if (!bucket_infos.empty()) {
-            previous_count += bucket_infos.back().count;
-        }
-
-        BucketInfo info = {b.front(), b.back(), previous_count, b.size()};
+        BucketInfo info = {b.front(), b.back(), previous_count};
         bucket_infos.push_back(info);
     }
-}
-
-template<class T>
-Selectivity Histogram<T>::CountBelowValue(const T &val) {
-
-    auto first_greater = std::find_if(std::begin(bucket_infos), std::end(bucket_infos), [&](BucketInfo &b) {
-        return greater(b.right_val, val);
-    });
-
-    if (first_greater == std::begin(bucket_infos)) {
-        return Selectivity {0, first_greater->count};
-    }
-
-    if (first_greater == std::end(bucket_infos)) {
-        return Selectivity {total_records, total_records};
-    }
-
-    return Selectivity {(first_greater - 1)->count, first_greater->count};
-
-}
-
-template<class T>
-size_t Histogram<T>::MatchingPredicate(std::function<bool(const T&)> predicate) const {
-
-    std::vector<BucketInfo> matching_infos;
-    for (const BucketInfo& info: bucket_infos) {
-        if (predicate(info.right_val)) {
-            matching_infos.push_back(info);
-        }
-    }
-
-    size_t total_count = std::accumulate(
-        matching_infos.begin(),
-        matching_infos.end(),
-        0u,
-        [](auto acc, BucketInfo b) {
-            return acc + b.in_bucket;
-        }
-    );
-
-    return total_count;
 }
 
 template<class T>
