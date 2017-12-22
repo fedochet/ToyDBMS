@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctime>
 #include "histogram.h"
 
 using namespace std;
@@ -33,7 +34,7 @@ void test_histograms() {
 
 void test_predicates_matching() {
     vector<int> data = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    Histogram<int> h(data);
+    Histogram<int> h(data, less<>(), 3);
 
     cout << h.CountStatisticsFor(10) << endl;
     cout << h.CountStatisticsFor(15) << endl;
@@ -45,8 +46,18 @@ void test_predicates_matching() {
 template class Histogram<int>;
 
 int main() {
-    test_histograms();
-    test_predicates_matching();
+    std::srand(unsigned(std::time(0)));
+    vector<int> test;
+    for (size_t i = 0; i < 100000; i++) {
+        test.push_back(std::rand() % 100);
+    }
+
+    Histogram<int> h(test, less<>(), 1024);
+
+    int n;
+    while (cin >> n) {
+        cout << h.CountStatisticsFor(n) << endl;
+    }
 
     return 0;
 }

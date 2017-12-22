@@ -23,13 +23,14 @@ struct Statistics {
 inline std::ostream& operator<<(std::ostream& os, const Statistics& c) {
     os << "less than: " << c.less_than
       << ", equals: " << c.equals
-      << ", greater_than: " << c.greater_than;
+      << ", greater_than: " << c.greater_than << ", totaling " << c.greater_than + c.equals + c.less_than;
 
     return os;
 }
 
 template<class T>
 struct Histogram {
+
     explicit Histogram(std::vector<T> data,
                        std::function<bool(const T &, const T &)> ascending_ordering = std::less<T>(),
                        size_t number_of_buckets = 10);
@@ -41,12 +42,10 @@ struct Histogram {
 private:
 
     struct BucketInfo {
-        T val;
+        T left_val;
+        T right_val;
         size_t count;
         size_t in_bucket;
-        operator const T&() const {
-            return val;
-        };
     };
 
     size_t total_records;
@@ -55,6 +54,10 @@ private:
 
     bool less(const T& left, const T& right) const {
         return less_predicate(left, right);
+    }
+
+    bool leq(const T& left, const T& right) const {
+        return less(left, right) || equal(left, right);
     }
 
     bool greater(const T& left, const T& right) const {
@@ -78,6 +81,7 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
         using std::vector<T>::empty;
         using std::vector<T>::size;
         using std::vector<T>::back;
+        using std::vector<T>::front;
     };
 
     std::vector<Bucket> buckets(number_of_buckets, Bucket());
@@ -90,7 +94,7 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
     double records_per_bucket = static_cast<double>(data.size()) / static_cast<double>(number_of_buckets);
 
     for (size_t i = 0; i < total_records; i++) {
-        auto bucket_number = static_cast<size_t> (static_cast<double>(i + 1) / records_per_bucket) - 1;
+        auto bucket_number = static_cast<size_t>(ceil(static_cast<double>(i + 1) / records_per_bucket)) - 1;
         buckets.at(bucket_number).push_back(data.at(i));
     }
 
@@ -104,7 +108,7 @@ Histogram<T>::Histogram(std::vector<T> data, std::function<bool(const T &, const
             previous_count += bucket_infos.back().count;
         }
 
-        BucketInfo info = {b.back(), previous_count, b.size()};
+        BucketInfo info = {b.front(), b.back(), previous_count, b.size()};
         bucket_infos.push_back(info);
     }
 }
@@ -113,7 +117,7 @@ template<class T>
 Selectivity Histogram<T>::CountBelowValue(const T &val) {
 
     auto first_greater = std::find_if(std::begin(bucket_infos), std::end(bucket_infos), [&](BucketInfo &b) {
-        return greater(b.val, val);
+        return greater(b.right_val, val);
     });
 
     if (first_greater == std::begin(bucket_infos)) {
@@ -132,8 +136,8 @@ template<class T>
 size_t Histogram<T>::MatchingPredicate(std::function<bool(const T&)> predicate) const {
 
     std::vector<BucketInfo> matching_infos;
-    for (auto& info: bucket_infos) {
-        if (predicate(info.val)) {
+    for (const BucketInfo& info: bucket_infos) {
+        if (predicate(info.right_val)) {
             matching_infos.push_back(info);
         }
     }
@@ -152,19 +156,21 @@ size_t Histogram<T>::MatchingPredicate(std::function<bool(const T&)> predicate) 
 
 template<class T>
 Statistics Histogram<T>::CountStatisticsFor(const T &val) const {
+
     Statistics result {0,0,0};
+
     for (const BucketInfo& bucket: bucket_infos) {
-        if (less(val, bucket)) {
+        if (less(bucket.right_val, val)) {
             result.less_than += bucket.in_bucket;
             continue;
         }
 
-        if (equal(val, bucket)) {
+        if (leq(bucket.left_val, val) && leq(val, bucket.right_val)) {
             result.equals += bucket.in_bucket;
             continue;
         }
 
-        if (greater(val, bucket)) {
+        if (less(val, bucket.left_val)) {
             result.greater_than += bucket.in_bucket;
             continue;
         }
