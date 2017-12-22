@@ -35,7 +35,10 @@ void test_predicates_matching() {
     vector<int> data = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     Histogram<int> h(data);
 
-    cout << h.MatchingPredicate([](auto& i) { return i == 40;}) << endl;
+    cout << h.CountStatisticsFor(10) << endl;
+    cout << h.CountStatisticsFor(15) << endl;
+    cout << h.CountStatisticsFor(20) << endl;
+    cout << h.CountStatisticsFor(100) << endl;
 }
 
 

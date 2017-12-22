@@ -14,6 +14,20 @@ struct Selectivity {
     }
 };
 
+struct Statistics {
+    size_t less_than;
+    size_t greater_than;
+    size_t equals;
+};
+
+inline std::ostream& operator<<(std::ostream& os, const Statistics& c) {
+    os << "less than: " << c.less_than
+      << ", equals: " << c.equals
+      << ", greater_than: " << c.greater_than;
+
+    return os;
+}
+
 template<class T>
 struct Histogram {
     explicit Histogram(std::vector<T> data,
@@ -21,6 +35,7 @@ struct Histogram {
                        size_t number_of_buckets = 10);
 
     Selectivity CountBelowValue(const T &val);
+    Statistics CountStatisticsFor(const T &val) const;
     size_t MatchingPredicate(std::function<bool(const T&)> predicate) const;
 
 private:
@@ -29,21 +44,24 @@ private:
         T val;
         size_t count;
         size_t in_bucket;
+        operator const T&() const {
+            return val;
+        };
     };
 
     size_t total_records;
     std::function<bool(const T &, const T &)> less_predicate;
     std::vector<BucketInfo> bucket_infos;
 
-    bool less(const T& left, const T& right) {
+    bool less(const T& left, const T& right) const {
         return less_predicate(left, right);
     }
 
-    bool greater(const T& left, const T& right) {
+    bool greater(const T& left, const T& right) const {
         return less_predicate(right, left);
     }
 
-    bool equal(const T& left, const T& right) {
+    bool equal(const T& left, const T& right) const {
         return !less(left, right) && !greater(left, right);
     }
 
@@ -130,4 +148,27 @@ size_t Histogram<T>::MatchingPredicate(std::function<bool(const T&)> predicate) 
     );
 
     return total_count;
+}
+
+template<class T>
+Statistics Histogram<T>::CountStatisticsFor(const T &val) const {
+    Statistics result {0,0,0};
+    for (const BucketInfo& bucket: bucket_infos) {
+        if (less(val, bucket)) {
+            result.less_than += bucket.in_bucket;
+            continue;
+        }
+
+        if (equal(val, bucket)) {
+            result.equals += bucket.in_bucket;
+            continue;
+        }
+
+        if (greater(val, bucket)) {
+            result.greater_than += bucket.in_bucket;
+            continue;
+        }
+    }
+
+    return result;
 }
